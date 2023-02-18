@@ -18,14 +18,14 @@ export const Input: React.FC<InputProps> = ({
 }) => {
   const limitText =
     type === "text"
-      ? `Максимум — ${maxLength} символа`
+      ? `Максимум символов — ${maxLength} `
       : `Максимальное число — ${max}`;
 
   return (
     <div className={`${styles.content} ${extraClass}`}>
       <input
         className={`${styles.input} text text_type_input text_color_input`}
-        placeholder={placeholder}
+        placeholder={rest.disabled ? "" : placeholder}
         type={type}
         maxLength={maxLength}
         max={max}

@@ -1,0 +1,19 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+.container {
+  display: flex;
+  gap: 12px;
+  width: calc(522 / 1308 * 100%);
+  max-width: 522px;
+}
+
+.animaionContainer {
+  display: flex;
+  padding-top: 120px;
+  gap: 16px;
+}
