@@ -5,7 +5,7 @@ import { Circle } from "../ui/circle/circle";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import styles from "./string.module.css";
 import { ElementStates } from "../../types/element-states";
-import { reverseString, swapArrayElement } from "../../utils/string-reverse";
+import { reverseString, swapArrayElement } from "../../utils/string/string-reverse";
 import { DELAY_IN_MS, SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { SectionContainer } from "../ui/container/section-container/section-container";
 import { TSwapLog } from "../../utils/types";

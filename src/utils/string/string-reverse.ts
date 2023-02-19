@@ -1,5 +1,5 @@
-import { ElementStates } from "../types/element-states";
-import { TSwapLog } from "./types";
+import { ElementStates } from "../../types/element-states";
+import { TSwapLog } from "../types";
 
 export function swapArrayElement(
   arr: Array<any>,
