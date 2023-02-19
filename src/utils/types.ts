@@ -1,0 +1,1 @@
+export type TSwapLog = [number, number][];

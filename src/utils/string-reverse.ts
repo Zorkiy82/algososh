@@ -1,4 +1,5 @@
 import { ElementStates } from "../types/element-states";
+import { TSwapLog } from "./types";
 
 export function swapArrayElement(
   arr: Array<any>,
@@ -12,19 +13,19 @@ export function swapArrayElement(
 
 export function reverseString(str: string) {
   const res = str.split("");
-  const workArr = res.map((val) => {
+  const animationData = res.map((val) => {
     return { value: val, state: ElementStates.Default };
   });
-  const swapLog = [];
+  const swapLog: TSwapLog = [];
   let first = 0;
   let second = res.length - 1;
 
   while (first <= second) {
-    swapLog.push({ first, second });
+    swapLog.push([first, second]);
     swapArrayElement(res, first, second);
     first++;
     second--;
   }
 
-  return { res: res.join(""), workArr, swapLog };
+  return { res: res.join(""), animationData, swapLog };
 }

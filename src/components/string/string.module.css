@@ -1,11 +1,5 @@
-.section {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  align-items: center;
-}
 
-.container {
+.inputContainer {
   display: flex;
   gap: 12px;
   width: calc(522 / 1308 * 100%);
