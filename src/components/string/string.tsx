@@ -94,7 +94,7 @@ export const StringComponent: React.FC = () => {
             isLoader={isLoading}
             onClick={onClickHandler}
             text="Развернуть"
-            style={{ width: "178px" }}
+            linkedList="small"
           />
         </div>
 

@@ -52,7 +52,7 @@ export const FibonacciPage: React.FC = () => {
             isLoader={isLoading}
             type="submit"
             text="Рассчитать"
-            style={{ width: "178px" }}
+            linkedList="small"
           />
         </form>
         <div className={styles.animaionContainer}>
