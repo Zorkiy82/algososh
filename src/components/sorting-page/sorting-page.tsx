@@ -1,21 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SectionContainer } from "../ui/container/section-container/section-container";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { RadioInput } from "../ui/radio-input/radio-input";
 import styles from "./sorting-page.module.css";
 import { Button } from "../ui/button/button";
 import { Direction } from "../../types/direction";
+import { getNewArray, sortingAlgorithms } from "../../utils/sorting/sorting";
+import { Column } from "../ui/column/column";
+
+type TAlgorithm = "selection" | "bubble";
 
 export const SortingPage: React.FC = () => {
-  const data = { algoritm: "selectionSort" };
+  const settings: { algorithm: TAlgorithm } = { algorithm: "selection" };
+
+  const [arr, setArr] = useState<Array<number>>([]);
+
+  useEffect(() => {
+    newArrayHandler();
+  }, []);
+
   function onChangeHandler(evt: React.ChangeEvent<HTMLInputElement>) {
-    data.algoritm = evt.target.value;
+    const value = evt.target.value;
+    if (value === "selection" || value === "bubble") {
+      settings.algorithm = value;
+    }
   }
 
-  function onClickHandler(id:string) {
-    console.log(data.algoritm, id);
+  function onClickHandler(direction: Direction) {
+    sortingAlgorithms[settings.algorithm]([2, 3], direction);
   }
 
+  function newArrayHandler() {
+    const newArr = getNewArray();
+    setArr(newArr);
+  }
 
   return (
     <SolutionLayout title="Сортировка массива">
@@ -24,39 +42,43 @@ export const SortingPage: React.FC = () => {
           <RadioInput
             onChange={onChangeHandler}
             label="Выбор"
-            name="algoritm"
-            value="selectionSort"
+            name="algorithm"
+            value="selection"
             defaultChecked
           />
 
           <RadioInput
             onChange={onChangeHandler}
             label="Пузырёк"
-            name="algoritm"
-            value="bubbleSort"
+            name="algorithm"
+            value="bubble"
           />
 
           <Button
-            onClick={()=>onClickHandler(Direction.Ascending)}
+            onClick={() => onClickHandler(Direction.Ascending)}
             linkedList="medium"
             text="По возрастанию"
             sorting={Direction.Ascending}
-            id={Direction.Ascending}
           />
 
           <Button
-            onClick={()=>onClickHandler(Direction.Descending)}
+            onClick={() => onClickHandler(Direction.Descending)}
             linkedList="medium"
             text="По убыванию"
             sorting={Direction.Descending}
-            id={Direction.Descending}
           />
           <Button
-            onClick={()=>onClickHandler("newArray")}
+            onClick={newArrayHandler}
             linkedList="medium"
             text="Новый массив"
-            id="newArray"
           />
+        </div>
+
+        <div className={styles.animaionContainer}>
+          {Boolean(arr.length) &&
+            arr.map((val, index) => (
+                <Column index={val} key={index} />
+              ))}
         </div>
       </SectionContainer>
     </SolutionLayout>
