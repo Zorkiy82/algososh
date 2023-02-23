@@ -5,7 +5,7 @@ import { RadioInput } from "../ui/radio-input/radio-input";
 import styles from "./sorting-page.module.css";
 import { Button } from "../ui/button/button";
 import { Direction } from "../../types/direction";
-import { getNewArray, sortingAlgorithms } from "../../utils/sorting/sorting";
+import { randomArr, sortingAlgorithms } from "../../utils/sorting/sorting";
 import { Column } from "../ui/column/column";
 import { TItemsData, TActionDataLog } from "../../utils/types";
 import { getAnimaionData, swapArrayElement } from "../../utils/utils";
@@ -130,7 +130,7 @@ export const SortingPage: React.FC = () => {
   }
 
   function newArrayHandler() {
-    settings.mainArr = getNewArray();
+    settings.mainArr = randomArr();
     setItemsData(getAnimaionData(settings.mainArr));
   }
 
