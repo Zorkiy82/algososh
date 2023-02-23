@@ -5,45 +5,39 @@ import { Circle } from "../ui/circle/circle";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import styles from "./string.module.css";
 import { ElementStates } from "../../types/element-states";
-import { reverseString, swapArrayElement } from "../../utils/string/string-reverse";
+import { reverseString } from "../../utils/string/string-reverse";
 import { DELAY_IN_MS, SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { SectionContainer } from "../ui/container/section-container/section-container";
-import { TSwapLog } from "../../utils/types";
-
-type TAnimationData<T> = {
-  value: T;
-  state: ElementStates;
-}[];
+import { TItemsData, TActionDataLog } from "../../utils/types";
+import { getAnimaionData, swapArrayElement } from "../../utils/utils";
 
 export const StringComponent: React.FC = () => {
   const [update, setUpdate] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [animationData, setAnimationData] = useState<TAnimationData<string>>(
-    []
-  );
-  const [swapLog, setSwapLog] = useState<TSwapLog>([]);
+  const [itemsData, setItemsData] = useState<TItemsData>([]);
+  const [actionDataLog, setActionDataLog] = useState<TActionDataLog>([]);
   const [counter, setCounter] = useState(-1);
 
   useEffect(() => {
     if (counter > -1) {
-      const swapData = swapLog[counter];
-      const [firstIndex, secondIndex] = swapData;
+      const actionIndex = actionDataLog[counter].actionIndex;
+      const [firstIndex, secondIndex] = actionIndex;
 
-      swapData.forEach((position) => {
-        animationData[position].state = ElementStates.Changing;
+      actionIndex.forEach((position) => {
+        itemsData[position].state = ElementStates.Changing;
       });
 
       setUpdate(!update);
 
       setTimeout(() => {
-        swapData.forEach((position) => {
-          animationData[position].state = ElementStates.Modified;
+        actionIndex.forEach((position) => {
+          itemsData[position].state = ElementStates.Modified;
         });
 
-        swapArrayElement(animationData, firstIndex, secondIndex);
+        swapArrayElement(itemsData, firstIndex, secondIndex);
 
-        if (counter + 1 < swapLog.length) {
+        if (counter + 1 < actionDataLog.length) {
           setCounter(counter + 1);
         } else {
           setCounter(-1);
@@ -55,17 +49,18 @@ export const StringComponent: React.FC = () => {
 
   function onChangeHandler(evt: React.ChangeEvent<HTMLInputElement>) {
     setInputValue(evt.target.value.toUpperCase());
-    if (animationData.length) {
-      setAnimationData([]);
+    if (itemsData.length) {
+      setItemsData([]);
     }
   }
 
   function onClickHandler() {
     if (inputValue) {
-      const { animationData, swapLog } = reverseString(inputValue);
+      const itemsData = getAnimaionData(inputValue.split(""));
+      const { res, actionDataLog } = reverseString(inputValue);
 
-      setSwapLog(swapLog);
-      setAnimationData(animationData);
+      setActionDataLog(actionDataLog);
+      setItemsData(itemsData);
       toogleIsLoading();
 
       setTimeout(() => {
@@ -100,14 +95,18 @@ export const StringComponent: React.FC = () => {
 
         <div className={styles.animaionContainer}>
           {inputValue &&
-            !animationData.length &&
+            !itemsData.length &&
             inputValue
               .split("")
               .map((ltr, index) => <Circle letter={ltr} key={index} />)}
 
-          {Boolean(animationData.length) &&
-            animationData.map((elem, index) => (
-              <Circle letter={elem.value} key={index} state={elem.state} />
+          {Boolean(itemsData.length) &&
+            itemsData.map((elem, index) => (
+              <Circle
+                letter={String(elem.value)}
+                key={index}
+                state={elem.state}
+              />
             ))}
         </div>
       </SectionContainer>
