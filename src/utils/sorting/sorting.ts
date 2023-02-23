@@ -76,7 +76,7 @@ function selectionSort(arr: any[], direction: Direction) {
   return { res, actionDataLog };
 }
 
-export function getNewArray(
+export function randomArr(
   minValue = 0,
   maxValue = 100,
   minLength = 3,
