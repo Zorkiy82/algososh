@@ -72,7 +72,6 @@ function selectionSort(arr: any[], direction: Direction) {
       swapArrayElement(res, first, targetIndex);
     }
   }
-  console.log(actionDataLog)
   return { res, actionDataLog };
 }
 
