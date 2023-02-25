@@ -15,7 +15,7 @@ export const StackPage: React.FC = () => {
   const [itemsData, setItemsData] = useState<TItemsData>([]);
 
   function onChangeHandler(evt: React.ChangeEvent<HTMLInputElement>) {
-    setInputValue(evt.target.value);
+    setInputValue(evt.target.value.toUpperCase());
   }
 
   function onClickHandler(action: "push" | "pop" | "clear") {
@@ -38,21 +38,23 @@ export const StackPage: React.FC = () => {
             onClick={() => onClickHandler("push")}
             linkedList="medium"
             text="Добавить"
-            disabled={isLoading}
+            disabled={isLoading || stack.getSize() >= 11}
             extraClass="ml-6"
           />
+
           <Button
             onClick={() => onClickHandler("pop")}
             linkedList="medium"
             text="Удалить"
-            disabled={isLoading}
+            disabled={isLoading || stack.getSize() === 0}
             extraClass="ml-6"
           />
+
           <Button
             onClick={() => onClickHandler("clear")}
             linkedList="medium"
             text="Очистить"
-            disabled={isLoading}
+            disabled={isLoading || stack.getSize() === 0}
             extraClass="ml-40"
           />
         </div>

@@ -1,0 +1,10 @@
+.inputContainer {
+    display: flex;
+  }
+  
+  .animaionContainer {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    padding-top: 48px;
+  }

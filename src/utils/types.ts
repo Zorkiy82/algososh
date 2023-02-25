@@ -8,6 +8,6 @@ export type TActionData = {
 export type TActionDataLog = TActionData[];
 
 export type TItemsData = Array<{
-  value: string | number;
+  value: string | number | null;
   state: ElementStates;
 }>;
