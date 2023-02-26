@@ -33,6 +33,8 @@ export const QueuePage: React.FC = () => {
         <div className={styles.inputContainer}>
           <Input
             onChange={onChangeHandler}
+            
+            placeholder="Введите значение"
             value={inputValue}
             maxLength={4}
             isLimitText={true}

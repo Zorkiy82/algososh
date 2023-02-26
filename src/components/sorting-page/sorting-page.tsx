@@ -5,10 +5,10 @@ import { RadioInput } from "../ui/radio-input/radio-input";
 import styles from "./sorting-page.module.css";
 import { Button } from "../ui/button/button";
 import { Direction } from "../../types/direction";
-import { randomArr, sortingAlgorithms } from "../../utils/sorting/sorting";
+import { sortingAlgorithms } from "../../utils/sorting/sorting";
 import { Column } from "../ui/column/column";
 import { TItemsData, TActionDataLog } from "../../utils/types";
-import { getAnimaionData, swapArrayElement } from "../../utils/utils";
+import { getAnimaionData, randomArr, swapArrayElement } from "../../utils/utils";
 import { ElementStates } from "../../types/element-states";
 import { DELAY_IN_MS, SHORT_DELAY_IN_MS } from "../../constants/delays";
 

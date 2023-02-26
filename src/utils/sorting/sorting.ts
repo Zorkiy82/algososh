@@ -75,21 +75,4 @@ function selectionSort(arr: any[], direction: Direction) {
   return { res, actionDataLog };
 }
 
-export function randomArr(
-  minValue = 0,
-  maxValue = 100,
-  minLength = 3,
-  maxLength = 17
-) {
-  const length = Math.round(
-    Math.random() * (maxLength - minLength) + minLength
-  );
-  const res: Array<number> = [];
 
-  for (let i = 0; i < length; i++) {
-    const val = Math.round(Math.random() * (maxValue - minValue) + minValue);
-    res.push(val);
-  }
-
-  return res.slice();
-}
