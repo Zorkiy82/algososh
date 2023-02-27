@@ -19,10 +19,32 @@ interface ILinkedList<T> {
 
 export class LinkedList<T> implements ILinkedList<T> {
   private head: Node<T> | null;
+  private tail: Node<T> | null;
   private size: number;
   constructor() {
     this.head = null;
+    this.tail = null;
     this.size = 0;
+  }
+
+  removeElementAt(index: number) {
+    let dummyHead = { ...this.head };
+    dummyHead.next = this.head;
+    let curr = dummyHead.next;
+    let currIndex = 0;
+    let prev = dummyHead;
+
+    while (currIndex !== index && curr) {
+      prev = curr;
+      curr = curr.next;
+      currIndex++;
+    }
+
+    if (curr) {
+      prev.next = curr.next;
+      this.head = dummyHead.next;
+      this.size--;
+    }
   }
 
   insertAt(element: T, index: number) {
@@ -53,19 +75,40 @@ export class LinkedList<T> implements ILinkedList<T> {
     }
   }
 
+  removeAtHead() {
+    this.removeElementAt(0);
+  }
+
+  removeAtTail() {
+    this.removeElementAt(this.size - 1);
+  }
+
+  appstart(element: T) {
+    const node = new Node(element);
+
+    if (this.head === null || this.tail === null) {
+      this.head = node;
+      this.tail = node;
+    } else {
+      if (this.head) {
+        node.next = this.head;
+      }
+      this.head = node;
+    }
+    this.size++;
+  }
+
   append(element: T) {
     const node = new Node(element);
-    let current;
 
-    if (this.head === null) {
+    if (this.head === null || this.tail === null) {
       this.head = node;
+      this.tail = node;
     } else {
-      current = this.head;
-      while (current.next) {
-        current = current.next;
+      if (this.tail) {
+        this.tail.next = node;
       }
-
-      current.next = node;
+      this.tail = node;
     }
     this.size++;
   }
@@ -96,23 +139,23 @@ export class LinkedList<T> implements ILinkedList<T> {
   }
 }
 
-const removeElements = (
-  head: Node<number> | null,
-  val: number
-): Node<number> | null => {
+const removeElements = (head: Node<number> | null, index: number): void => {
   let dummyHead = new Node(0); // добавим в начало пустой узел
   dummyHead.next = head;
   let curr = dummyHead.next;
+  let currIndex = 0;
   let prev = dummyHead;
 
   while (curr) {
-    if (curr.value === val) {
+    if (currIndex === index) {
       prev.next = curr.next;
+      return;
     } else {
       prev = curr;
     }
     curr = curr.next;
+    currIndex += 1;
   }
 
-  return dummyHead.next; // возвращаем список без пустого узла
+  // return dummyHead.next; // возвращаем список без пустого узла
 };

@@ -16,16 +16,16 @@ export const ListPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [itemsData, setItemsData] = useState<TItemsData>([]);
 
-  useEffect(()=>{
-    const newArr = randomArr(0,9999,2,6);
-    
+  useEffect(() => {
+    const newArr = randomArr(0, 9999, 2, 6);
+
     console.log(newArr);
-    newArr.forEach(val=>{
+    newArr.forEach((val) => {
       list.append(String(val));
-    })
+    });
     const data = list.getItemsData();
     setItemsData(data);
-  },[])
+  }, []);
 
   function onChangeValue(evt: React.ChangeEvent<HTMLInputElement>) {
     setInputValue(evt.target.value.toUpperCase());
@@ -33,6 +33,12 @@ export const ListPage: React.FC = () => {
 
   function onChangeIndex(evt: React.ChangeEvent<HTMLInputElement>) {
     setInputIndex(Number(evt.target.value));
+  }
+
+  function onClickHandler(action: "appstart" | "append" | "removeAtHead" | "removeAtTail" ) {
+    list[action](inputValue);
+    const data = list.getItemsData();
+    setItemsData(data);
   }
 
   return (
@@ -50,28 +56,28 @@ export const ListPage: React.FC = () => {
           />
 
           <Button
-            onClick={() => undefined}
+            onClick={() => onClickHandler("appstart")}
             linkedList="small"
             text="Добавить в head"
             // disabled={isLoading || list.getSize() >= 11}
           />
 
           <Button
-            onClick={() => undefined}
+            onClick={() => onClickHandler("append")}
             linkedList="small"
             text="Добавить в tail"
             // disabled={isLoading || list.getSize() === 0}
           />
 
           <Button
-            onClick={() => undefined}
+            onClick={() => onClickHandler("removeAtHead")}
             linkedList="small"
             text="Удалить из head"
             // disabled={isLoading || list.getSize() === 0}
           />
 
           <Button
-            onClick={() => undefined}
+            onClick={() => onClickHandler("removeAtTail")}
             linkedList="small"
             text="Удалить из tail"
             // disabled={isLoading || list.getSize() === 0}
@@ -114,8 +120,8 @@ export const ListPage: React.FC = () => {
                 index={index}
                 key={index}
                 state={elem.state}
-                tail={index === itemsData.length - 1 ? "tail" : <Circle isSmall={true} letter="?" />}
-                head={index === 0 ? "head" : <Circle isSmall={true} letter="?" />}
+                tail={index === itemsData.length - 1 ? "tail" : ""}
+                head={index === 0 ? "head" : ""}
               />
             ))}
         </div>
