@@ -11,12 +11,12 @@ import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import styles from "./list-page.module.css";
 
 enum ListAction {
-  Appstart = "appstart",
+  Prepend = "prepend",
   Append = "append",
-  RemoveAtHead = "removeAtHead",
-  RemoveAtTail = "removeAtTail",
-  RemoveAtIndex = "removeAtIndex",
-  InsertAtIndex = "insertAtIndex",
+  DeleteHead = "deleteHead",
+  DeleteTail = "deleteTail",
+  DeleteByIndex = "deleteByIndex",
+  AddByIndex = "addByIndex",
 }
 
 type TSetttings = {
@@ -28,16 +28,14 @@ export const ListPage: React.FC = () => {
   const [settings, setSettings] = useState<TSetttings>({ action: null });
   const [inputValue, setInputValue] = useState("");
   const [inputIndex, setInputIndex] = useState<number | "">("");
-  const [list, setList] = useState(new LinkedList<string>());
+  const [list, setList] = useState(
+    new LinkedList<string>(randomArr(0, 9999, 2, 6).map((val) => String(val)))
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [itemsData, setItemsData] = useState<TItemsData>([]);
 
   useEffect(() => {
-    const newArr = randomArr(0, 9999, 2, 6);
-    newArr.forEach((val) => {
-      list.append(String(val));
-    });
-    const data = list.getItemsData();
+    const data = list.toArray();
     setItemsData(data);
   }, []);
 
@@ -64,7 +62,7 @@ export const ListPage: React.FC = () => {
   function onClickHandler(action: ListAction) {
     const value = inputValue;
     const index = inputIndex;
-    if (action === ListAction.Appstart || action === ListAction.Append) {
+    if (action === ListAction.Prepend || action === ListAction.Append) {
       if (value === "") {
         return;
       }
@@ -72,7 +70,7 @@ export const ListPage: React.FC = () => {
       setInputValue("");
     }
 
-    if (action === ListAction.RemoveAtIndex) {
+    if (action === ListAction.DeleteByIndex) {
       if (index === "") {
         return;
       }
@@ -80,7 +78,7 @@ export const ListPage: React.FC = () => {
       setInputIndex("");
     }
 
-    if (action === ListAction.InsertAtIndex) {
+    if (action === ListAction.AddByIndex) {
       if (index === "" || value === "") {
         return;
       }
@@ -93,7 +91,7 @@ export const ListPage: React.FC = () => {
     // setIsLoading(true);
 
     list[action](value, Number(index));
-    const data = list.getItemsData();
+    const data = list.toArray();
     setItemsData(data);
   }
 
@@ -112,10 +110,10 @@ export const ListPage: React.FC = () => {
           />
 
           <Button
-            onClick={() => onClickHandler(ListAction.Appstart)}
+            onClick={() => onClickHandler(ListAction.Prepend)}
             linkedList="small"
             text="Добавить в head"
-            isLoader={isLoading && settings.action === ListAction.Appstart}
+            isLoader={isLoading && settings.action === ListAction.Prepend}
             disabled={isLoading || list.getSize() >= maxSize}
           />
 
@@ -128,18 +126,18 @@ export const ListPage: React.FC = () => {
           />
 
           <Button
-            onClick={() => onClickHandler(ListAction.RemoveAtHead)}
+            onClick={() => onClickHandler(ListAction.DeleteHead)}
             linkedList="small"
             text="Удалить из head"
-            isLoader={isLoading && settings.action === ListAction.RemoveAtHead}
+            isLoader={isLoading && settings.action === ListAction.DeleteHead}
             disabled={isLoading || list.getSize() === 0}
           />
 
           <Button
-            onClick={() => onClickHandler(ListAction.RemoveAtTail)}
+            onClick={() => onClickHandler(ListAction.DeleteTail)}
             linkedList="small"
             text="Удалить из tail"
-            isLoader={isLoading && settings.action === ListAction.RemoveAtTail}
+            isLoader={isLoading && settings.action === ListAction.DeleteTail}
             disabled={isLoading || list.getSize() === 0}
           />
         </div>
@@ -158,18 +156,18 @@ export const ListPage: React.FC = () => {
           />
 
           <Button
-            onClick={() => onClickHandler(ListAction.InsertAtIndex)}
+            onClick={() => onClickHandler(ListAction.AddByIndex)}
             linkedList="big"
             text="Добавить по индексу"
-            isLoader={isLoading && settings.action === ListAction.InsertAtIndex}
+            isLoader={isLoading && settings.action === ListAction.AddByIndex}
             disabled={isLoading || list.getSize() >= maxSize}
           />
 
           <Button
-            onClick={() => onClickHandler(ListAction.RemoveAtIndex)}
+            onClick={() => onClickHandler(ListAction.DeleteByIndex)}
             linkedList="big"
             text="Удалить по индексу"
-            isLoader={isLoading && settings.action === ListAction.RemoveAtIndex}
+            isLoader={isLoading && settings.action === ListAction.DeleteByIndex}
             disabled={isLoading || list.getSize() === 0}
           />
         </div>
