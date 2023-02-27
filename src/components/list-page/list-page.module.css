@@ -15,3 +15,11 @@
   gap: 10px;
   padding-top: 48px;
 }
+
+.elementContainer {
+  display: flex;
+  align-items: center;
+}
+.arrowContainer {
+  margin-left: 10px;
+}

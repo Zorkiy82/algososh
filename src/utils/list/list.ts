@@ -12,7 +12,7 @@ export class Node<T> {
 
 interface ILinkedList<T> {
   append: (element: T) => void;
-  insertAt: (element: T, position: number) => void;
+  insertAtIndex: (element: T, position: number) => void;
   getSize: () => number;
   print: () => void;
 }
@@ -27,7 +27,11 @@ export class LinkedList<T> implements ILinkedList<T> {
     this.size = 0;
   }
 
-  removeElementAt(index: number) {
+  removeAtIndex(_: any, index: number | "") {
+    if (index < 0 || index > this.size - 1) {
+      console.log("Enter a valid index");
+      return;
+    }
     let dummyHead = { ...this.head };
     dummyHead.next = this.head;
     let curr = dummyHead.next;
@@ -47,8 +51,8 @@ export class LinkedList<T> implements ILinkedList<T> {
     }
   }
 
-  insertAt(element: T, index: number) {
-    if (index < 0 || index > this.size) {
+  insertAtIndex(element: T, index: number) {
+    if (index < 0 || index > this.size - 1) {
       console.log("Enter a valid index");
       return;
     } else {
@@ -76,11 +80,11 @@ export class LinkedList<T> implements ILinkedList<T> {
   }
 
   removeAtHead() {
-    this.removeElementAt(0);
+    this.removeAtIndex("", 0);
   }
 
   removeAtTail() {
-    this.removeElementAt(this.size - 1);
+    this.removeAtIndex("", this.size - 1);
   }
 
   appstart(element: T) {
@@ -138,24 +142,3 @@ export class LinkedList<T> implements ILinkedList<T> {
     return res.slice();
   }
 }
-
-const removeElements = (head: Node<number> | null, index: number): void => {
-  let dummyHead = new Node(0); // добавим в начало пустой узел
-  dummyHead.next = head;
-  let curr = dummyHead.next;
-  let currIndex = 0;
-  let prev = dummyHead;
-
-  while (curr) {
-    if (currIndex === index) {
-      prev.next = curr.next;
-      return;
-    } else {
-      prev = curr;
-    }
-    curr = curr.next;
-    currIndex += 1;
-  }
-
-  // return dummyHead.next; // возвращаем список без пустого узла
-};
