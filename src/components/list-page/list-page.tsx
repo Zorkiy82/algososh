@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { DELAY_IN_MS, SHORT_DELAY_IN_MS } from "../../constants/delays";
+import { ElementStates } from "../../types/element-states";
 import { LinkedList } from "../../utils/list/list";
-import { TItemsData } from "../../utils/types";
+import { TItemData, TItemsData } from "../../utils/types";
 import { randomArr } from "../../utils/utils";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
@@ -21,12 +23,20 @@ enum ListAction {
 
 type TSetttings = {
   action: ListAction | null;
+  actionDataLog: TItemsDataAction[];
 };
+
+export type TItemsDataAction = [TItemData, TItemData];
 
 export const ListPage: React.FC = () => {
   const maxSize = 8;
-  const [settings, setSettings] = useState<TSetttings>({ action: null });
+  const [settings, setSettings] = useState<TSetttings>({
+    action: null,
+    actionDataLog: [],
+  });
   const [inputValue, setInputValue] = useState("");
+  const [counter, setCounter] = useState(-1);
+  const [update, setUpdate] = useState(false);
   const [inputIndex, setInputIndex] = useState<number | "">("");
   const [list, setList] = useState(
     new LinkedList<string>(randomArr(0, 9999, 2, 6).map((val) => String(val)))
@@ -38,6 +48,74 @@ export const ListPage: React.FC = () => {
     const data = list.toArray();
     setItemsData(data);
   }, []);
+
+  useEffect(() => {
+    if (counter > -1) {
+      const [first, second] = settings.actionDataLog[counter];
+
+      if (first.action === "check") {
+        if (second.action === "delete") {
+          itemsData.forEach((_, index) => {
+            itemsData[index].state = ElementStates.Default;
+          });
+        }
+        if (first.index !== undefined) {
+          if (itemsData.length === 0) {
+            itemsData.push({ value: "", state: ElementStates.Changing });
+          }
+          itemsData[first.index].value = first.value;
+          itemsData[first.index].state = first.state;
+          itemsData[first.index].topValue = first.topValue;
+          itemsData[first.index].botomValue = first.botomValue;
+        }
+      }
+
+      if (first.action === "unshift" || first.action === "push") {
+        itemsData[first.action]({
+          value: first.value,
+          state: first.state,
+        });
+      }
+
+      if (first.action === "add") {
+        itemsData.forEach((_, index) => {
+          itemsData[index].state = ElementStates.Default;
+        });
+        itemsData.splice(Number(first.index), 0, {
+          value: first.value,
+          state: first.state,
+        });
+      }
+
+      setUpdate(!update);
+
+      setTimeout(() => {
+        if (second.action === "check") {
+          if (second.index !== undefined) {
+            itemsData[second.index].value = second.value;
+            itemsData[second.index].state = second.state;
+            itemsData[second.index].topValue = second.topValue;
+            itemsData[second.index].botomValue = second.botomValue;
+          }
+        }
+
+        if (second.action === "shift" || second.action === "pop") {
+          itemsData[second.action]();
+        }
+
+        if (second.action === "delete") {
+          itemsData.splice(Number(second.index), 1);
+        }
+
+        if (counter + 1 < settings.actionDataLog.length) {
+          setCounter(counter + 1);
+        } else {
+          setCounter(-1);
+          setIsLoading(false);
+        }
+      }, DELAY_IN_MS);
+    }
+  }, [counter]);
 
   function onChangeValue(evt: React.ChangeEvent<HTMLInputElement>) {
     setInputValue(evt.target.value.toUpperCase());
@@ -88,11 +166,13 @@ export const ListPage: React.FC = () => {
     }
 
     settings.action = action;
-    // setIsLoading(true);
 
-    list[action](value, Number(index));
-    const data = list.toArray();
-    setItemsData(data);
+    setIsLoading(true);
+
+    const actionDataLog = list[action](value, Number(index));
+    settings.actionDataLog = actionDataLog ? actionDataLog : [];
+
+    setCounter(0);
   }
 
   return (
@@ -181,8 +261,32 @@ export const ListPage: React.FC = () => {
                   index={index}
                   key={index}
                   state={elem.state}
-                  tail={index === itemsData.length - 1 ? "tail" : ""}
-                  head={index === 0 ? "head" : ""}
+                  tail={
+                    elem.botomValue !== undefined ? (
+                      <Circle
+                        letter={String(elem.botomValue)}
+                        isSmall={true}
+                        state={ElementStates.Changing}
+                      />
+                    ) : index === itemsData.length - 1 ? (
+                      "tail"
+                    ) : (
+                      ""
+                    )
+                  }
+                  head={
+                    elem.topValue ? (
+                      <Circle
+                        letter={String(elem.topValue)}
+                        isSmall={true}
+                        state={ElementStates.Changing}
+                      />
+                    ) : index === 0 ? (
+                      "head"
+                    ) : (
+                      ""
+                    )
+                  }
                 />
 
                 {index < arr.length - 1 && (

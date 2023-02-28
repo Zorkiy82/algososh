@@ -1,5 +1,6 @@
+import { TItemsDataAction } from "../../components/list-page/list-page";
 import { ElementStates } from "../../types/element-states";
-import { TItemsData } from "../types";
+import { TItemData, TItemsData } from "../types";
 
 export class LinkedListNode<T> {
   value: T;
@@ -32,6 +33,7 @@ export class LinkedList<T> implements ILinkedList<T> {
   }
 
   deleteByIndex(_: any, index: number | "") {
+    const IData: TItemsDataAction[] = [];
     if (index < 0 || index > this.size - 1) {
       console.log("Enter a valid index");
       return;
@@ -43,10 +45,46 @@ export class LinkedList<T> implements ILinkedList<T> {
     let prev = dummyHead;
 
     while (currIndex !== index && curr) {
+      const first: TItemData = {
+        index: currIndex,
+        value: String(curr?.value),
+        state: ElementStates.Default,
+        botomValue: "",
+        action: "check",
+      };
+
+      IData.push([
+        first,
+        { ...first, state: ElementStates.Changing, botomValue: undefined },
+      ]);
+
       prev = curr;
       curr = curr.next;
       currIndex++;
     }
+
+    const next: TItemData = {
+      index: currIndex,
+      value: String(curr?.value),
+      state: ElementStates.Default,
+      botomValue: "",
+      action: "check",
+    };
+
+    IData.push([next, { ...next, state: ElementStates.Default }]);
+
+    const final: TItemData = {
+      index: currIndex,
+      value: "",
+      state: ElementStates.Changing,
+      botomValue: String(curr?.value),
+      action: "check",
+    };
+
+    IData.push([
+      final,
+      { ...final, action: "delete", state: ElementStates.Default },
+    ]);
 
     if (curr) {
       prev.next = curr.next;
@@ -60,46 +98,130 @@ export class LinkedList<T> implements ILinkedList<T> {
 
       this.tail = curr;
     }
+    return IData;
   }
 
   addByIndex(element: T, index: number) {
-    if (index < 0 || index > this.size - 1) {
-      console.log("Enter a valid index");
-      return;
+    const IData: TItemsDataAction[] = [];
+
+    const node = new LinkedListNode(element);
+    if (index === 0) {
+      return this.prepend(element);
     } else {
-      const node = new LinkedListNode(element);
-      if (index === 0) {
-        node.next = this.head;
-        this.head = node;
-      } else {
-        let curr = this.head;
-        let currIndex = 0;
+      let curr = this.head;
+      let currIndex = 0;
 
-        while (currIndex < index - 1) {
-          curr = curr && curr.next;
-          currIndex++;
-        }
+      while (currIndex < index - 1) {
+        const first: TItemData = {
+          index: currIndex,
+          value: String(curr?.value),
+          state: ElementStates.Default,
+          topValue: String(element),
+          action: "check",
+        };
 
-        node.next = curr && curr.next;
-        if (curr) {
-          curr.next = node;
-        }
+        IData.push([
+          first,
+          { ...first, state: ElementStates.Changing, topValue: undefined },
+        ]);
+
+        // console.log(IData.slice());
+        curr = curr && curr.next;
+        currIndex++;
       }
 
-      this.size++;
+      const first: TItemData = {
+        index: currIndex,
+        value: String(curr?.value),
+        state: ElementStates.Default,
+        topValue: String(element),
+        action: "check",
+      };
+
+      IData.push([
+        first,
+        { ...first, state: ElementStates.Changing, topValue: undefined },
+      ]);
+
+      const second: TItemData = {
+        index: currIndex + 1,
+        value: String(curr?.next?.value),
+        state: ElementStates.Default,
+        topValue: String(element),
+        action: "check",
+      };
+
+      IData.push([second, { ...second, topValue: undefined }]);
+
+      const final: TItemData = {
+        index: currIndex + 1,
+        value: String(element),
+        state: ElementStates.Modified,
+        action: "add",
+      };
+
+      IData.push([
+        final,
+        { ...final, action: "check", state: ElementStates.Default },
+      ]);
+
+      node.next = curr && curr.next;
+      if (curr) {
+        curr.next = node;
+      }
     }
+
+    this.size++;
+    return IData;
   }
 
   deleteHead() {
+    const IData: TItemsDataAction[] = [];
+    let first: TItemData = {
+      index: 0,
+      value: "",
+      state: ElementStates.Default,
+      botomValue: String(this.head?.value),
+      action: "check",
+    };
+
+    IData.push([first, { ...first, action: "shift" }]);
+
     this.deleteByIndex("", 0);
+
+    return IData;
   }
 
   deleteTail() {
+    const IData: TItemsDataAction[] = [];
+    let first: TItemData = {
+      index: this.size - 1,
+      value: "",
+      state: ElementStates.Default,
+      botomValue: String(this.tail?.value),
+      action: "check",
+    };
+
+    IData.push([first, { ...first, action: "pop" }]);
+
     this.deleteByIndex("", this.size - 1);
+
+    return IData;
   }
 
-  prepend(element: T) {
+  prepend(element: T): TItemsDataAction[] {
+    const IData: TItemsDataAction[] = [];
     const node = new LinkedListNode(element);
+
+    let first: TItemData = {
+      index: 0,
+      value: String(this.head === null ? "" : this.head.value),
+      state: ElementStates.Default,
+      topValue: String(element),
+      action: "check",
+    };
+
+    IData.push([first, { ...first, topValue: undefined }]);
 
     if (this.head === null || this.tail === null) {
       this.head = node;
@@ -111,10 +233,60 @@ export class LinkedList<T> implements ILinkedList<T> {
       this.head = node;
     }
     this.size++;
+
+    if (this.size === 1) {
+      IData.push([
+        {
+          index: 0,
+          value: String(element),
+          state: ElementStates.Modified,
+          action: "check",
+          topValue: undefined,
+          botomValue: undefined,
+        },
+        {
+          index: 0,
+          value: String(element),
+          state: ElementStates.Default,
+          action: "check",
+        },
+      ]);
+    } else {
+      IData.push([
+        {
+          index: 0,
+          value: String(element),
+          state: ElementStates.Modified,
+          action: "unshift",
+        },
+        {
+          index: 0,
+          value: String(element),
+          state: ElementStates.Default,
+          action: "check",
+        },
+      ]);
+    }
+
+    return IData;
   }
 
   append(element: T) {
     const node = new LinkedListNode(element);
+    if (this.size === 0) {
+      return this.prepend(element);
+    }
+
+    const IData: TItemsDataAction[] = [];
+    let first: TItemData = {
+      index: this.size - 1,
+      value: String(this.tail === null ? "" : this.tail.value),
+      state: ElementStates.Default,
+      topValue: String(element),
+      action: "check",
+    };
+
+    IData.push([first, { ...first, topValue: undefined }]);
 
     if (this.head === null || this.tail === null) {
       this.head = node;
@@ -126,6 +298,23 @@ export class LinkedList<T> implements ILinkedList<T> {
       this.tail = node;
     }
     this.size++;
+
+    IData.push([
+      {
+        index: 0,
+        value: String(element),
+        state: ElementStates.Modified,
+        action: "push",
+      },
+      {
+        index: this.size - 1,
+        value: String(element),
+        state: ElementStates.Default,
+        action: "check",
+      },
+    ]);
+
+    return IData;
   }
 
   getSize() {
