@@ -124,8 +124,7 @@ export class LinkedList<T> implements ILinkedList<T> {
           first,
           { ...first, state: ElementStates.Changing, topValue: undefined },
         ]);
-
-        // console.log(IData.slice());
+        
         curr = curr && curr.next;
         currIndex++;
       }

@@ -1,5 +1,4 @@
 export function getFibonacciNumbers(num: number) {
-  // console.log(num)
   if (num < 0) {
     return [];
   }
@@ -9,6 +8,6 @@ export function getFibonacciNumbers(num: number) {
     const nextValue = res[i-1] + res[i-2];
     res.push(nextValue)
   }
-  // console.log(res);
+  
   return res.slice(0,num+1);
 }
