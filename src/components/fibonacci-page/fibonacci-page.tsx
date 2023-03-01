@@ -9,8 +9,10 @@ import { Circle } from "../ui/circle/circle";
 import { DELAY_IN_MS } from "../../constants/delays";
 
 export const FibonacciPage: React.FC = () => {
+  const [minNumber, maxNumber] = [0, 19];
   const [fiboSequence, setFiboSequence] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [inputNumber, setInputNumber] = useState<number | "">("");
   const [counter, setCounter] = useState(-1);
 
   useEffect(() => {
@@ -26,36 +28,43 @@ export const FibonacciPage: React.FC = () => {
     }
   }, [counter]);
 
-  function onSubmitHandler(evt: FormEvent<HTMLFormElement>) {
-    evt.preventDefault();
-    // @ts-ignore
-    const value = Number(evt.target.querySelector("input").value);
-    setFiboSequence(getFibonacciNumbers(value));
+  function onClickHandler() {
+    setFiboSequence(getFibonacciNumbers(Number(inputNumber)));
     setIsLoading(true);
     setCounter(0);
+  }
+  function onChange(evt: React.ChangeEvent<HTMLInputElement>) {
+    let index: number | "" =
+      evt.target.value === "" ? "" : Number(evt.target.value);
+
+    index = index < minNumber ? "" : index > maxNumber ? maxNumber : index;
+
+    setInputNumber(index);
   }
 
   return (
     <SolutionLayout title="Последовательность Фибоначчи">
       <SectionContainer>
-        <form onSubmit={onSubmitHandler} className={styles.inputContainer}>
+        <div className={styles.inputContainer}>
           <Input
+            value={inputNumber}
+            onChange={onChange}
             type="number"
-            placeholder="Введите число от 0 до 19"
-            max={19}
-            min={0}
+            placeholder={`Введите число от ${minNumber} до ${maxNumber}`}
+            max={maxNumber}
+            min={minNumber}
             isLimitText={true}
             disabled={isLoading}
-            required
           />
 
           <Button
+            onClick={onClickHandler}
             isLoader={isLoading}
-            type="submit"
             text="Рассчитать"
             linkedList="small"
+            disabled={inputNumber === ""}
           />
-        </form>
+        </div>
         <div className={styles.animaionContainer}>
           {Boolean(fiboSequence.length) &&
             fiboSequence

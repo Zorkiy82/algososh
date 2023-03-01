@@ -24,7 +24,7 @@ export const StackPage: React.FC = () => {
   const [settings, setSettings] = useState<TSetttings>({
     action: Action.Clear,
   });
-  
+
   const [inputValue, setInputValue] = useState("");
   const [stack, setStack] = useState(new Stack<string>());
   const [isLoading, setIsLoading] = useState(false);
@@ -83,7 +83,7 @@ export const StackPage: React.FC = () => {
             linkedList="medium"
             text="Добавить"
             isLoader={isLoading && settings.action === Action.Push}
-            disabled={isLoading || stack.getSize() >= 11}
+            disabled={isLoading || stack.getSize() >= 11 || inputValue === ""}
             extraClass="ml-6"
           />
 

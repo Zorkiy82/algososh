@@ -87,6 +87,7 @@ export const StringComponent: React.FC = () => {
 
           <Button
             isLoader={isLoading}
+            disabled={inputValue === ""}
             onClick={onClickHandler}
             text="Развернуть"
             linkedList="small"
