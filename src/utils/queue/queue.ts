@@ -36,17 +36,21 @@ export class Queue<T> implements IQueue<T> {
     this.container[this.head] = null;
     this.head = (this.head + 1) % this.size;
     this.length -= 1;
+    if (this.length === 0) {
+      this.head = 0;
+      this.tail = 0;
+    }
   };
 
   peak = (): T | null => {
     if (this.isEmpty()) {
       throw new Error("No elements in the queue");
     }
-    return this.container[this.head % this.size]; // Ваш код
+    return this.container[this.head % this.size];
   };
 
   isEmpty = () => this.length === 0;
-  
+
   isFull = () => this.length === this.size;
 
   getHead = () => this.head;

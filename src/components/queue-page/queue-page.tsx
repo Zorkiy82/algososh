@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
+import { ElementStates } from "../../types/element-states";
 import { Queue } from "../../utils/queue/queue";
 import { TItemsData } from "../../utils/types";
 import { Button } from "../ui/button/button";
@@ -8,11 +10,25 @@ import { Input } from "../ui/input/input";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import styles from "./queue-page.module.css";
 
+enum Action {
+  Dequeue = "dequeue",
+  Enqueue = "enqueue",
+  Clear = "clear",
+}
+
+type TSetttings = {
+  action: Action;
+};
+
 export const QueuePage: React.FC = () => {
+  const [settings, setSettings] = useState<TSetttings>({
+    action: Action.Clear,
+  });
   const [inputValue, setInputValue] = useState("");
   const [queue, setqueue] = useState(new Queue<string>(7));
   const [isLoading, setIsLoading] = useState(false);
   const [itemsData, setItemsData] = useState<TItemsData>([]);
+  const [update, setUpdate] = useState(false);
 
   useEffect(() => {
     setItemsData(queue.getElements());
@@ -22,9 +38,36 @@ export const QueuePage: React.FC = () => {
     setInputValue(evt.target.value.toUpperCase());
   }
 
-  function onClickHandler(action: "dequeue" | "enqueue" | "clear") {
-    queue[action](inputValue);
-    setItemsData(queue.getElements());
+  function onClickHandler(action: Action) {
+    if (inputValue === "" && action === Action.Enqueue) {
+      return;
+    } else {
+      settings.action = action;
+      setIsLoading(true);
+
+      if (action === Action.Clear) {
+        itemsData.forEach((_, index) => {
+          itemsData[index].state = ElementStates.Changing;
+        });
+      }
+
+      if (action === Action.Enqueue) {
+        itemsData[queue.getTail()].state = ElementStates.Changing;
+      }
+
+      if (action === Action.Dequeue) {
+        itemsData[queue.getHead()].state = ElementStates.Changing;
+      }
+
+      setUpdate(!update);
+
+      setTimeout(() => {
+        queue[action](inputValue);
+        setItemsData(queue.getElements());
+        setInputValue("");
+        setIsLoading(false);
+      }, SHORT_DELAY_IN_MS);
+    }
   }
 
   return (
@@ -33,7 +76,6 @@ export const QueuePage: React.FC = () => {
         <div className={styles.inputContainer}>
           <Input
             onChange={onChangeHandler}
-            
             placeholder="Введите значение"
             value={inputValue}
             maxLength={4}
@@ -42,28 +84,31 @@ export const QueuePage: React.FC = () => {
           />
 
           <Button
-            onClick={() => onClickHandler("enqueue")}
+            onClick={() => onClickHandler(Action.Enqueue)}
             linkedList="medium"
             text="Добавить"
+            isLoader={isLoading && settings.action === Action.Enqueue}
             disabled={isLoading || queue.isFull()}
             extraClass="ml-6"
           />
 
           <Button
-            onClick={() => onClickHandler("dequeue")}
+            onClick={() => onClickHandler(Action.Dequeue)}
             linkedList="medium"
             text="Удалить"
+            isLoader={isLoading && settings.action === Action.Dequeue}
             disabled={isLoading || queue.isEmpty()}
             extraClass="ml-6"
           />
 
           <Button
-            onClick={() => onClickHandler("clear")}
+            onClick={() => onClickHandler(Action.Clear)}
             linkedList="medium"
             text="Очистить"
+            isLoader={isLoading && settings.action === Action.Clear}
             disabled={isLoading || queue.isEmpty()}
             extraClass="ml-40"
-          />          
+          />
         </div>
 
         <div className={styles.animaionContainer}>
@@ -74,8 +119,12 @@ export const QueuePage: React.FC = () => {
                 index={index}
                 key={index}
                 state={elem.state}
-                head={queue.getHead() === index ? "head" : ""}
-                tail={queue.getTail() === index ? "tail" : ""}
+                head={
+                  queue.getHead() === index && queue.getLength() ? "head" : ""
+                }
+                tail={
+                  queue.getTail() === index && queue.getLength() ? "tail" : ""
+                }
               />
             ))}
         </div>
