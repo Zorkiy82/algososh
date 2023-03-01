@@ -2,7 +2,7 @@ import { ElementStates } from "../types/element-states";
 
 export type TActionData = {
   actionIndex: [number, number];
-  action: "swap" | "check" | undefined;
+  action: "swap" | "check" | "fix" | undefined;
 };
 
 export type TActionDataLog = TActionData[];

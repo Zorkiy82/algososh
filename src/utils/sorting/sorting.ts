@@ -20,13 +20,14 @@ const sortDirection = {
 function bubbleSort(arr: any[], direction: Direction) {
   const res = arr.slice();
   const actionDataLog: TActionDataLog = [];
-  let isSorting = false;
 
   if (res.length) {
-    while (!isSorting) {
-      isSorting = true;
-      for (let first = 0; first < res.length - 1; first++) {
+    for (let i = 0; i < res.length; i++) {
+      let isSorting = true;
+      let fIndex = 0;
+      for (let first = 0; first < res.length - i - 1; first++) {
         const second = first + 1;
+        fIndex = second;
         const actionData: TActionData = {
           actionIndex: [first, second],
           action: "check",
@@ -34,13 +35,16 @@ function bubbleSort(arr: any[], direction: Direction) {
         if (sortDirection[direction](res[first], res[second])) {
           swapArrayElement(res, first, second);
           actionData.action = "swap";
-
-          if (isSorting) {
-            isSorting = false;
-          }
+          isSorting = false;
         }
 
         actionDataLog.push(actionData);
+      }
+      if (isSorting) {
+        actionDataLog.push({ actionIndex: [0, fIndex], action: "fix" });
+        return { res, actionDataLog };
+      } else {
+        actionDataLog.push({ actionIndex: [fIndex, fIndex], action: "fix" });
       }
     }
   }
@@ -70,9 +74,16 @@ function selectionSort(arr: any[], direction: Direction) {
         action: "swap",
       });
       swapArrayElement(res, first, targetIndex);
+
+      actionDataLog.push({
+        actionIndex: [first, first],
+        action: "fix",
+      });
     }
   }
+  actionDataLog.push({
+    actionIndex: [res.length - 1, res.length - 1],
+    action: "fix",
+  });
   return { res, actionDataLog };
 }
-
-

@@ -14,12 +14,13 @@ export const FibonacciPage: React.FC = () => {
   const [counter, setCounter] = useState(-1);
 
   useEffect(() => {
-    if (counter > -1) {
+    if (counter > -1 && counter < 20) {
       setTimeout(() => {
         if (counter + 1 < fiboSequence.length) {
           setCounter(counter + 1);
         } else {
           setIsLoading(false);
+          setCounter(20);
         }
       }, DELAY_IN_MS);
     }

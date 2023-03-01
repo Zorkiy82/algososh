@@ -8,7 +8,11 @@ import { Direction } from "../../types/direction";
 import { sortingAlgorithms } from "../../utils/sorting/sorting";
 import { Column } from "../ui/column/column";
 import { TItemsData, TActionDataLog } from "../../utils/types";
-import { getAnimaionData, randomArr, swapArrayElement } from "../../utils/utils";
+import {
+  getAnimaionData,
+  randomArr,
+  swapArrayElement,
+} from "../../utils/utils";
 import { ElementStates } from "../../types/element-states";
 import { DELAY_IN_MS, SHORT_DELAY_IN_MS } from "../../constants/delays";
 
@@ -45,49 +49,25 @@ export const SortingPage: React.FC = () => {
     if (counter > -1) {
       const { actionIndex, action } = settings.actionDataLog[counter];
       const [firstIndex, secondIndex] = actionIndex;
-      const effectivLength =
-        settings.actionDataLog.length - settings.mainArr.length;
 
-      actionIndex.forEach((position) => {
-        itemsData[position].state = ElementStates.Changing;
-      });
+      if (action === "fix") {
+        for (let i = firstIndex; i <= secondIndex; i++) {
+          itemsData[i].state = ElementStates.Modified;
+        }
+      } else {
+        actionIndex.forEach((position) => {
+          itemsData[position].state = ElementStates.Changing;
+        });
+      }
 
       setUpdate(!update);
 
       setTimeout(
         () => {
-          if (settings.algorithm === "bubble") {
-            if (counter <= effectivLength) {
-              if (action === "check") {
-                itemsData[firstIndex].state = ElementStates.Default;
-                if (secondIndex === settings.sortingArr.length - 1) {
-                  itemsData[secondIndex].state = ElementStates.Default;
-                }
-              } else {
-                itemsData[secondIndex].state = ElementStates.Default;
-                if (secondIndex === settings.sortingArr.length - 1) {
-                  itemsData[firstIndex].state = ElementStates.Default;
-                }
-              }
-            } else {
-              actionIndex.forEach((position) => {
-                itemsData[position].state = ElementStates.Modified;
-              });
-            }
-          }
-
-          if (settings.algorithm === "selection") {
-            if (action === "check") {
-              itemsData[secondIndex].state = ElementStates.Default;
-            } else {
-              itemsData[firstIndex].state = ElementStates.Default;
-              itemsData[secondIndex].state = ElementStates.Modified;
-            }
-
-            if (counter === settings.actionDataLog.length - 1) {
-              itemsData[itemsData.length - 1].state = ElementStates.Modified;
-              itemsData[itemsData.length - 2].state = ElementStates.Modified;
-            }
+          if (action !== "fix") {
+            actionIndex.forEach((position) => {
+              itemsData[position].state = ElementStates.Default;
+            });
           }
 
           if (action === "swap") {
