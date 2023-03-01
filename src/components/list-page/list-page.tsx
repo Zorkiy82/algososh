@@ -194,7 +194,9 @@ export const ListPage: React.FC = () => {
             linkedList="small"
             text="Добавить в head"
             isLoader={isLoading && settings.action === ListAction.Prepend}
-            disabled={isLoading || list.getSize() >= maxSize}
+            disabled={
+              isLoading || list.getSize() >= maxSize || inputValue === ""
+            }
           />
 
           <Button
@@ -202,7 +204,9 @@ export const ListPage: React.FC = () => {
             linkedList="small"
             text="Добавить в tail"
             isLoader={isLoading && settings.action === ListAction.Append}
-            disabled={isLoading || list.getSize() >= maxSize}
+            disabled={
+              isLoading || list.getSize() >= maxSize || inputValue === ""
+            }
           />
 
           <Button
@@ -240,7 +244,12 @@ export const ListPage: React.FC = () => {
             linkedList="big"
             text="Добавить по индексу"
             isLoader={isLoading && settings.action === ListAction.AddByIndex}
-            disabled={isLoading || list.getSize() >= maxSize}
+            disabled={
+              isLoading ||
+              list.getSize() >= maxSize ||
+              inputIndex === "" ||
+              inputValue === ""
+            }
           />
 
           <Button
@@ -248,7 +257,7 @@ export const ListPage: React.FC = () => {
             linkedList="big"
             text="Удалить по индексу"
             isLoader={isLoading && settings.action === ListAction.DeleteByIndex}
-            disabled={isLoading || list.getSize() === 0}
+            disabled={isLoading || list.getSize() === 0 || inputIndex === ""}
           />
         </div>
 

@@ -88,7 +88,7 @@ export const QueuePage: React.FC = () => {
             linkedList="medium"
             text="Добавить"
             isLoader={isLoading && settings.action === Action.Enqueue}
-            disabled={isLoading || queue.isFull()}
+            disabled={isLoading || queue.isFull() || inputValue === ""}
             extraClass="ml-6"
           />
 
