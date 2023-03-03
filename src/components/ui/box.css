@@ -376,6 +376,9 @@
 .ml-25 {
   margin-left: calc(var(--offset-base-size) * 25);
 }
+.ml-26 {
+  margin-left: calc(var(--offset-base-size) * 25);
+}
 .ml-30 {
   margin-left: calc(var(--offset-base-size) * 30);
 }
@@ -384,6 +387,9 @@
 }
 .ml-40 {
   margin-left: calc(var(--offset-base-size) * 40);
+}
+.ml-52 {
+  margin-left: calc(var(--offset-base-size) * 52);
 }
 
 .mr-1 {
