@@ -14,6 +14,8 @@ describe("Тестирование работоспособности прило
   });
 });
 
+// ------------------------------------------------------------------------------------
+
 describe("Тестирование переходов по страницам", () => {
   it("открывается страница Строка", () => {
     cy.visit("/recursion");
@@ -45,6 +47,8 @@ describe("Тестирование переходов по страницам", 
     cy.contains(/Связный список/i);
   });
 });
+
+// ------------------------------------------------------------------------------------
 
 describe("Функционал страницы Строка", () => {
   beforeEach(function () {
@@ -116,6 +120,8 @@ describe("Функционал страницы Строка", () => {
   });
 });
 
+// ------------------------------------------------------------------------------------
+
 describe("Функционал страницы Фибоначчи", () => {
   beforeEach(function () {
     cy.visit("/fibonacci");
@@ -143,8 +149,114 @@ describe("Функционал страницы Фибоначчи", () => {
         .find("[data-testid=letter-id]")
         .should("have.text", String(res[i]));
 
-        cy.wait(DELAY_IN_MS);
-
+      cy.wait(DELAY_IN_MS);
     }
+  });
+});
+
+// ------------------------------------------------------------------------------------
+
+describe("Функционал страницы Стек", () => {
+  beforeEach(function () {
+    cy.visit("/stack");
+    cy.get("input").as("input");
+    cy.contains("Добавить").as("button");
+    cy.contains("Удалить").as("delButton");
+    cy.contains("Очистить").as("clrButton");
+  });
+
+  it("Кнопка добавления недоступна если в инпуте пусто", () => {
+    cy.get("@input").should("have.value", "");
+    cy.get("@button").should("have.attr", "disabled");
+  });
+
+  it("Анимация добавления элемента корректно выполняется", () => {
+    const testData = "el1".toLocaleUpperCase();
+    cy.get("@input").type(`${testData}`);
+    cy.get("@button").click();
+
+    cy.get("#animaionContainer")
+      .children()
+      .last()
+      .find("[data-testid=letter-id]")
+      .should("have.text", testData);
+
+    cy.get("#animaionContainer")
+      .children()
+      .last()
+      .find("[data-testid=circle-id]")
+      .invoke("attr", "class")
+      .should("match", stateChanging);
+
+    cy.wait(SHORT_DELAY_IN_MS);
+
+    cy.get("#animaionContainer")
+      .children()
+      .last()
+      .find("[data-testid=letter-id]")
+      .should("have.text", testData);
+
+    cy.get("#animaionContainer")
+      .children()
+      .last()
+      .find("[data-testid=circle-id]")
+      .invoke("attr", "class")
+      .should("match", stateDefault);
+  });
+
+  it("Анимация удаления элемента корректно выполняется", () => {
+    const testData = "el1".toLocaleUpperCase();
+    cy.get("@input").type(`${testData}`);
+    cy.get("@button").click();
+    cy.get("#animaionContainer").children().should("have.length", 1);
+
+    cy.get("@delButton").click();
+
+    cy.get("#animaionContainer")
+      .children()
+      .last()
+      .find("[data-testid=letter-id]")
+      .should("have.text", testData);
+
+    cy.get("#animaionContainer")
+      .children()
+      .last()
+      .find("[data-testid=circle-id]")
+      .invoke("attr", "class")
+      .should("match", stateChanging);
+
+    cy.wait(SHORT_DELAY_IN_MS);
+
+    cy.get("#animaionContainer").children().should("have.length", 0);
+  });
+
+  it("Анимация очистки стека корректно выполняется", () => {
+    const testData = ["el0", "el1", "el2", "el3", "el4"].map((val) =>
+      val.toUpperCase()
+    );
+
+    for (let i = 0; i < testData.length; i++) {
+      cy.get("@input").type(`${testData[i]}`);
+      cy.get("@button").click();
+      cy.get("#animaionContainer")
+        .children()
+        .should("have.length", i + 1);
+      cy.wait(SHORT_DELAY_IN_MS);
+    }
+
+    cy.get("@clrButton").click();
+
+    cy.get("#animaionContainer")
+      .children()
+      .each(($el) => {
+        cy.wrap($el)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateChanging);
+      });
+
+    cy.wait(SHORT_DELAY_IN_MS);
+
+    cy.get("#animaionContainer").children().should("have.length", 0);
   });
 });
