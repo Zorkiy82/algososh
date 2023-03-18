@@ -1,5 +1,7 @@
 import { ElementStates } from "../../src/types/element-states";
 import { reverseString } from "../../src/utils/string/string-reverse";
+import { getFibonacciNumbers } from "../../src/utils/fibonacci/fibonacci";
+import { SHORT_DELAY_IN_MS, DELAY_IN_MS } from "../../src/constants/delays";
 
 const stateDefault = new RegExp(ElementStates.Default);
 const stateModified = new RegExp(ElementStates.Modified);
@@ -57,10 +59,9 @@ describe("Функционал страницы Строка", () => {
   });
 
   it("Анимация разворота строки корректно выполняется", () => {
-    const testData = "01234";
+    const testData = "РаЗвОрОТ".toUpperCase();
     const { res, actionDataLog } = reverseString(testData);
     cy.get("@input").type(`${testData}`);
-    // cy.get("@button").click();
 
     cy.get("#animaionContainer")
       .children()
@@ -74,13 +75,76 @@ describe("Функционал страницы Строка", () => {
           .should("match", stateDefault);
       });
 
-    for (let i = 0; i < testData.length; i++) {
+    cy.get("@button").click();
+    cy.wait(SHORT_DELAY_IN_MS);
+
+    for (let i = 0; i < actionDataLog.length; i++) {
+      const actionIndex = actionDataLog[i].actionIndex;
+
+      actionIndex.forEach((position) => {
+        cy.get("#animaionContainer")
+          .children()
+          .its(position)
+          .find("[data-testid=letter-id]")
+          .should("have.text", testData[position]);
+
+        cy.get("#animaionContainer")
+          .children()
+          .its(position)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateChanging);
+      });
+
+      cy.wait(DELAY_IN_MS);
+
+      actionIndex.forEach((position) => {
+        cy.get("#animaionContainer")
+          .children()
+          .its(position)
+          .find("[data-testid=letter-id]")
+          .should("have.text", res[position]);
+
+        cy.get("#animaionContainer")
+          .children()
+          .its(position)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateModified);
+      });
+    }
+  });
+});
+
+describe("Функционал страницы Фибоначчи", () => {
+  beforeEach(function () {
+    cy.visit("/fibonacci");
+    cy.get("input").as("input");
+    cy.contains("Рассчитать").as("button");
+  });
+
+  it("Кнопка добавления недоступна если в инпуте пусто", () => {
+    cy.get("@input").should("have.value", "");
+    cy.get("@button").should("have.attr", "disabled");
+  });
+
+  it("Анимация генерации чисел корректно выполняется", () => {
+    const testData = 19;
+    const res = getFibonacciNumbers(testData);
+    cy.get("@input").type(`${testData}`);
+    cy.get("#animaionContainer").children().should("have.length", 0);
+
+    cy.get("@button").click();
+
+    for (let i = 0; i < res.length; i++) {
       cy.get("#animaionContainer")
         .children()
-        .its(i)
+        .last()
         .find("[data-testid=letter-id]")
-        .should("have.text", testData[i]);
-      // cy.wait(1000);
+        .should("have.text", String(res[i]));
+
+        cy.wait(DELAY_IN_MS);
+
     }
   });
 });
