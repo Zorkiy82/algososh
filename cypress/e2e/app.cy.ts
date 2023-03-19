@@ -2,6 +2,7 @@ import { ElementStates } from "../../src/types/element-states";
 import { reverseString } from "../../src/utils/string/string-reverse";
 import { getFibonacciNumbers } from "../../src/utils/fibonacci/fibonacci";
 import { SHORT_DELAY_IN_MS, DELAY_IN_MS } from "../../src/constants/delays";
+import { Queue } from "../../src/utils/queue/queue";
 
 const stateDefault = new RegExp(ElementStates.Default);
 const stateModified = new RegExp(ElementStates.Modified);
@@ -170,7 +171,7 @@ describe("Функционал страницы Стек", () => {
     cy.get("@button").should("have.attr", "disabled");
   });
 
-  it("Анимация добавления элемента корректно выполняется", () => {
+  it("Анимация добавления элемента в стек корректно выполняется", () => {
     const testData = "el1".toLocaleUpperCase();
     cy.get("@input").type(`${testData}`);
     cy.get("@button").click();
@@ -204,7 +205,7 @@ describe("Функционал страницы Стек", () => {
       .should("match", stateDefault);
   });
 
-  it("Анимация удаления элемента корректно выполняется", () => {
+  it("Анимация удаления элемента из стека корректно выполняется", () => {
     const testData = "el1".toLocaleUpperCase();
     cy.get("@input").type(`${testData}`);
     cy.get("@button").click();
@@ -258,5 +259,225 @@ describe("Функционал страницы Стек", () => {
     cy.wait(SHORT_DELAY_IN_MS);
 
     cy.get("#animaionContainer").children().should("have.length", 0);
+  });
+});
+
+// ------------------------------------------------------------------------------------
+
+describe("Функционал страницы Очередь", () => {
+  beforeEach(function () {
+    cy.visit("/queue");
+    cy.get("input").as("input");
+    cy.contains("Добавить").as("button");
+    cy.contains("Удалить").as("delButton");
+    cy.contains("Очистить").as("clrButton");
+  });
+
+  it("Кнопка добавления недоступна если в инпуте пусто", () => {
+    cy.get("@input").should("have.value", "");
+    cy.get("@button").should("have.attr", "disabled");
+  });
+
+  it("Анимация добавления элемента в очередь корректно выполняется", () => {
+    const queue = new Queue<string>(7);
+    const testData = ["el0", "el1", "el2", "el3", "el4", "el5", "el6"].map(
+      (val) => val.toLocaleUpperCase()
+    );
+    for (let i = 0; i < testData.length; i++) {
+      const tail = queue.getTail();
+      const length = queue.getLength();
+      queue.enqueue(testData[i]);
+      cy.get("@input").type(`${testData[i]}`);
+      cy.get("@button").click();
+      cy.get("#animaionContainer")
+        .children()
+        .its(tail)
+        .find("[data-testid=circle-id]")
+        .invoke("attr", "class")
+        .should("match", stateChanging);
+
+      if (length) {
+        cy.get("#animaionContainer")
+          .children()
+          .its(tail)
+          .find("[data-testid=tail-id]")
+          .should("have.text", "tail");
+      } else {
+        cy.get("#animaionContainer")
+          .children()
+          .its(tail)
+          .find("[data-testid=tail-id]")
+          .should("have.text", "");
+      }
+
+      cy.wait(SHORT_DELAY_IN_MS);
+
+      cy.get("#animaionContainer")
+        .find("[data-testid=letter-id]")
+        .filter(":contains('EL')")
+        .should("have.length", queue.getLength());
+
+      cy.get("#animaionContainer")
+        .children()
+        .its(tail)
+        .find("[data-testid=letter-id]")
+        .should("have.text", testData[i]);
+
+      cy.get("#animaionContainer")
+        .children()
+        .its(tail)
+        .find("[data-testid=circle-id]")
+        .invoke("attr", "class")
+        .should("match", stateDefault);
+
+      cy.get("#animaionContainer")
+        .children()
+        .its(tail)
+        .find("[data-testid=tail-id]")
+        .should("not.have.text", "tail");
+
+      cy.get("#animaionContainer")
+        .children()
+        .its(queue.getTail())
+        .find("[data-testid=tail-id]")
+        .should("have.text", "tail");
+    }
+  });
+
+  it("Анимация удаления элемента из очереди корректно выполняется", () => {
+    const queue = new Queue<string>(7);
+    const testData = ["el0", "el1", "el2", "el3", "el4", "el5", "el6"].map(
+      (val) => val.toLocaleUpperCase()
+    );
+
+    for (let i = 0; i < testData.length; i++) {
+      cy.get("@input").type(`${testData[i]}`);
+      cy.get("@button").click();
+      queue.enqueue(testData[i]);
+      cy.wait(SHORT_DELAY_IN_MS);
+    }
+
+    for (let i = 0; i < testData.length; i++) {
+      const head = queue.getHead();
+      const length = queue.getLength();
+      cy.get("@delButton").click();
+      queue.dequeue();
+
+      cy.get("#animaionContainer")
+        .children()
+        .its(head)
+        .find("[data-testid=circle-id]")
+        .invoke("attr", "class")
+        .should("match", stateChanging);
+
+      if (length) {
+        cy.get("#animaionContainer")
+          .children()
+          .its(head)
+          .find("[data-testid=head-id]")
+          .should("have.text", "head");
+      } else {
+        cy.get("#animaionContainer")
+          .children()
+          .its(head)
+          .find("[data-testid=head-id]")
+          .should("have.text", "");
+      }
+      cy.wait(SHORT_DELAY_IN_MS);
+
+      cy.get("#animaionContainer")
+        .find("[data-testid=letter-id]")
+        .filter(":contains('EL')")
+        .should("have.length", queue.getLength());
+
+      cy.get("#animaionContainer")
+        .children()
+        .its(head)
+        .find("[data-testid=letter-id]")
+        .should("have.text", "");
+
+      cy.get("#animaionContainer")
+        .children()
+        .its(head)
+        .find("[data-testid=circle-id]")
+        .invoke("attr", "class")
+        .should("match", stateDefault);
+
+      cy.get("#animaionContainer")
+        .children()
+        .its(head)
+        .find("[data-testid=head-id]")
+        .should("have.text", "");
+
+      if (queue.getLength()) {
+        cy.get("#animaionContainer")
+          .children()
+          .its(queue.getHead())
+          .find("[data-testid=head-id]")
+          .should("have.text", "head");
+      } else {
+        cy.get("#animaionContainer")
+          .find("[data-testid=head-id]")
+          .filter(":contains('head')")
+          .should("have.length", 0);
+      }
+    }
+  });
+  it("Анимация очистки очереди корректно выполняется", () => {
+    const queue = new Queue<string>(7);
+    const testData = ["el0", "el1", "el2"].map((val) =>
+      val.toLocaleUpperCase()
+    );
+
+    for (let i = 0; i < testData.length; i++) {
+      cy.get("@input").type(`${testData[i]}`);
+      cy.get("@button").click();
+      queue.enqueue(testData[i]);
+      cy.wait(SHORT_DELAY_IN_MS);
+    }
+
+    cy.get("@clrButton").click();
+
+    cy.get("#animaionContainer")
+      .children()
+      .each(($el) => {
+        cy.wrap($el)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateChanging);
+      });
+
+      cy.get("#animaionContainer")
+      .find("[data-testid=letter-id]")
+      .filter(":contains('EL')")
+      .should("have.length", queue.getLength());
+
+      queue.clear();
+
+    cy.wait(SHORT_DELAY_IN_MS);
+
+    cy.get("#animaionContainer")
+      .children()
+      .each(($el) => {
+        cy.wrap($el)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateDefault);
+      });
+
+    cy.get("#animaionContainer")
+      .find("[data-testid=head-id]")
+      .filter(":contains('head')")
+      .should("have.length", 0);
+
+    cy.get("#animaionContainer")
+      .find("[data-testid=tail-id]")
+      .filter(":contains('tail')")
+      .should("have.length", 0);
+
+    cy.get("#animaionContainer")
+      .find("[data-testid=letter-id]")
+      .filter(":contains('EL')")
+      .should("have.length", queue.getLength());
   });
 });
