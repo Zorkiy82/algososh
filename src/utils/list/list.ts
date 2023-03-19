@@ -17,6 +17,8 @@ interface ILinkedList<T> {
   getSize: () => number;
 }
 
+export const defaultLinkedList = ["EL0", "EL1", "EL2", "EL3"];
+
 export class LinkedList<T> implements ILinkedList<T> {
   private head: LinkedListNode<T> | null;
   private tail: LinkedListNode<T> | null;
