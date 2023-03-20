@@ -5,6 +5,7 @@ import { SHORT_DELAY_IN_MS, DELAY_IN_MS } from "../../src/constants/delays";
 import { defaultLinkedList, LinkedList } from "../../src/utils/list/list";
 import { Queue } from "../../src/utils/queue/queue";
 import { find } from "cypress/types/lodash";
+import { wait } from "@testing-library/user-event/dist/utils";
 
 const stateDefault = new RegExp(ElementStates.Default);
 const stateModified = new RegExp(ElementStates.Modified);
@@ -552,7 +553,7 @@ describe("Функционал страницы Список", () => {
   });
 
   it("Анимация добавления элемента в head корректно выполняется", () => {
-    const testData = "t1".toUpperCase();
+    const testData = "h1".toUpperCase();
     const list = new LinkedList<string>(
       defaultLinkedList.map((val) => val.toUpperCase())
     );
@@ -621,6 +622,174 @@ describe("Функционал страницы Список", () => {
         cy.wrap($el)
           .find("[data-testid=letter-id]")
           .should("have.text", listArr[index].value);
+      });
+  });
+
+  it("Анимация добавления элемента в tail корректно выполняется", () => {
+    const testData = "t1".toUpperCase();
+    const list = new LinkedList<string>(
+      defaultLinkedList.map((val) => val.toUpperCase())
+    );
+    cy.get("#animaionContainer")
+      .children()
+      .last()
+      .children("[data-testid=element-id]")
+      .as("lastElem");
+
+    cy.get("@valueInput").type(testData);
+    cy.get("@addTailButton").click();
+
+    list.append(testData);
+    const listArr = list.toArray();
+
+    cy.get("@lastElem")
+      .children("[data-testid=head-id]")
+      .find("[data-testid=circle-id]")
+      .invoke("attr", "class")
+      .should("match", stateChanging);
+
+    cy.get("@lastElem")
+      .children("[data-testid=head-id]")
+      .find("[data-testid=letter-id]")
+      .should("have.text", testData);
+
+    cy.get("@lastElem")
+      .find("[data-testid=circle-id]")
+      .should("have.length", 2);
+
+    cy.get("@lastElem")
+      .children("[data-testid=circle-id]")
+      .invoke("attr", "class")
+      .should("match", stateDefault);
+
+    cy.wait(DELAY_IN_MS);
+
+    cy.get("@lastElem")
+      .children("[data-testid=circle-id]")
+      .invoke("attr", "class")
+      .should("match", stateModified);
+
+    cy.get("@lastElem")
+      .children("[data-testid=circle-id]")
+      .find("[data-testid=letter-id]")
+      .should("have.text", testData);
+
+    cy.get("@lastElem")
+      .children("[data-testid=tail-id]")
+      .should("have.text", "tail");
+
+    cy.wait(DELAY_IN_MS);
+
+    cy.get("#animaionContainer")
+      .find("[data-testid=element-id]")
+      .should("have.length", list.getSize());
+
+    cy.get("#animaionContainer")
+      .find("[data-testid=element-id]")
+      .each(($el, index) => {
+        cy.wrap($el)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateDefault);
+
+        cy.wrap($el)
+          .find("[data-testid=letter-id]")
+          .should("have.text", listArr[index].value);
+      });
+  });
+
+  it("Анимация добавления элемента по индексу корректно выполняется", () => {
+    const testData = "i1".toUpperCase();
+    const testIndex = 2;
+    const list = new LinkedList<string>(
+      defaultLinkedList.map((val) => val.toUpperCase())
+    );
+    cy.get("#animaionContainer").children().as("allChil");
+
+    cy.get("@valueInput").type(testData);
+    cy.get("@indexInput").type(String(testIndex));
+    cy.get("@addIndexButton").click();
+
+    let listArr = list.toArray();
+
+    for (let i = 0; i <= testIndex; i++) {
+      cy.get("@allChil")
+        .its(i)
+        .children("[data-testid=element-id]")
+        .children("[data-testid=head-id]")
+        .find("[data-testid=circle-id]")
+        .invoke("attr", "class")
+        .should("match", stateChanging);
+
+      cy.get("@allChil")
+        .its(i)
+        .children("[data-testid=element-id]")
+        .children("[data-testid=head-id]")
+        .find("[data-testid=letter-id]")
+        .should("have.text", testData);
+
+      cy.get("@allChil")
+        .its(i)
+        .children("[data-testid=element-id]")
+        .find("[data-testid=circle-id]")
+        .should("have.length", 2);
+
+      cy.get("@allChil")
+        .its(i)
+        .children("[data-testid=element-id]")
+        .children("[data-testid=circle-id]")
+        .invoke("attr", "class")
+        .should("match", stateDefault);
+
+      cy.wait(DELAY_IN_MS);
+
+      cy.get("@allChil")
+        .its(i)
+        .children("[data-testid=element-id]")
+        .children("[data-testid=circle-id]")
+        .invoke("attr", "class")
+        .should("match", i < testIndex ? stateChanging : stateModified);
+
+      cy.get("@allChil")
+        .its(i)
+        .children("[data-testid=element-id]")
+        .children("[data-testid=circle-id]")
+        .find("[data-testid=letter-id]")
+        .should("have.text", i < testIndex ? listArr[i].value : testData);
+    }
+
+    list.addByIndex(testData, testIndex);
+    listArr = list.toArray();
+
+    cy.wait(DELAY_IN_MS);
+
+    cy.get("#animaionContainer")
+      .find("[data-testid=element-id]")
+      .should("have.length", list.getSize());
+
+    cy.get("#animaionContainer")
+      .find("[data-testid=element-id]")
+      .each(($el, index) => {
+        cy.wrap($el)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateDefault);
+
+        cy.wrap($el)
+          .find("[data-testid=letter-id]")
+          .should("have.text", listArr[index].value);
+
+        if (index === list.getSize()-1) {
+          cy.wrap($el)
+            .children("[data-testid=tail-id]")
+            .should("have.text", "tail");
+        }
+
+        if (index === 0) {
+          cy.wrap($el)
+            .children("[data-testid=head-id]")
+            .should("have.text", "head");
+        }
       });
   });
 });
