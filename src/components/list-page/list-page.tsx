@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { DELAY_IN_MS, SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { ElementStates } from "../../types/element-states";
-import { LinkedList } from "../../utils/list/list";
+import { defaultLinkedList, LinkedList } from "../../utils/list/list";
 import { TItemData, TItemsData } from "../../utils/types";
 import { randomArr } from "../../utils/utils";
 import { Button } from "../ui/button/button";
@@ -39,7 +39,7 @@ export const ListPage: React.FC = () => {
   const [update, setUpdate] = useState(false);
   const [inputIndex, setInputIndex] = useState<number | "">("");
   const [list, setList] = useState(
-    new LinkedList<string>(randomArr(0, 9999, 2, 6).map((val) => String(val)))
+    new LinkedList<string>(defaultLinkedList.map((val) => val.toUpperCase()))
   );
   const [isLoading, setIsLoading] = useState(false);
   const [itemsData, setItemsData] = useState<TItemsData>([]);
@@ -261,7 +261,7 @@ export const ListPage: React.FC = () => {
           />
         </div>
 
-        <div className={styles.animaionContainer}>
+        <div className={styles.animaionContainer} id="animaionContainer">
           {Boolean(itemsData.length) &&
             itemsData.map((elem, index, arr) => (
               <div key={index} className={styles.elementContainer}>
@@ -299,7 +299,10 @@ export const ListPage: React.FC = () => {
                 />
 
                 {index < arr.length - 1 && (
-                  <div className={styles.arrowContainer}>
+                  <div
+                    className={styles.arrowContainer}
+                    data-testid="arrowContainer-id"
+                  >
                     <ArrowIcon />
                   </div>
                 )}
