@@ -1,5 +1,5 @@
 import { TActionDataLog } from "../types";
-import { getAnimaionData, swapArrayElement } from "../utils";
+import { swapArrayElement } from "../utils";
 
 export function reverseString(str: string) {
   const res = str.split("");

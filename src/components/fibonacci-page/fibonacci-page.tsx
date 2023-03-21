@@ -65,7 +65,7 @@ export const FibonacciPage: React.FC = () => {
             disabled={inputNumber === ""}
           />
         </div>
-        <div className={styles.animaionContainer}>
+        <div className={styles.animaionContainer} id="animaionContainer">
           {Boolean(fiboSequence.length) &&
             fiboSequence
               .filter((_, index) => index <= counter)

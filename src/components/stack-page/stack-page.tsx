@@ -106,7 +106,7 @@ export const StackPage: React.FC = () => {
           />
         </div>
 
-        <div className={styles.animaionContainer}>
+        <div className={styles.animaionContainer} id="animaionContainer">
           {Boolean(itemsData.length) &&
             itemsData.map((elem, index) => (
               <Circle

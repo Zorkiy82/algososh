@@ -1,0 +1,440 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Тесты компонента Circle Кейс #1 (без буквы и вообще без пропов) корректно отрисовывается 1`] = `
+<div
+  class="content "
+  data-testid="element-id"
+>
+  <div
+    class="text text_type_input text_color_input mb-4 absolute head element"
+    data-testid="head-id"
+  />
+  <div
+    class="circle   default"
+    data-testid="circle-id"
+  >
+    <p
+      class="text text_type_circle text_color_input letter"
+      data-testid="letter-id"
+    />
+  </div>
+  <p
+    class="text text_type_input text_color_input mt-4 absolute index"
+    data-testid="index-id"
+  />
+  <div
+    class="text text_type_input text_color_input mt-4 absolute tail30 element"
+    data-testid="tail-id"
+  />
+</div>
+`;
+
+exports[`Тесты компонента Circle Кейс #2 (с буквами) корректно отрисовывается 1`] = `
+<div
+  class="content "
+  data-testid="element-id"
+>
+  <div
+    class="text text_type_input text_color_input mb-4 absolute head element"
+    data-testid="head-id"
+  />
+  <div
+    class="circle   default"
+    data-testid="circle-id"
+  >
+    <p
+      class="text text_type_circle text_color_input letter"
+      data-testid="letter-id"
+    >
+      aBcdD
+    </p>
+  </div>
+  <p
+    class="text text_type_input text_color_input mt-4 absolute index"
+    data-testid="index-id"
+  />
+  <div
+    class="text text_type_input text_color_input mt-4 absolute tail30 element"
+    data-testid="tail-id"
+  />
+</div>
+`;
+
+exports[`Тесты компонента Circle Кейс #3 (с head) корректно отрисовывается 1`] = `
+<div
+  class="content "
+  data-testid="element-id"
+>
+  <div
+    class="text text_type_input text_color_input mb-4 absolute head string"
+    data-testid="head-id"
+  >
+    head
+  </div>
+  <div
+    class="circle   default"
+    data-testid="circle-id"
+  >
+    <p
+      class="text text_type_circle text_color_input letter"
+      data-testid="letter-id"
+    />
+  </div>
+  <p
+    class="text text_type_input text_color_input mt-4 absolute index"
+    data-testid="index-id"
+  />
+  <div
+    class="text text_type_input text_color_input mt-4 absolute tail30 element"
+    data-testid="tail-id"
+  />
+</div>
+`;
+
+exports[`Тесты компонента Circle Кейс #4 (с react-элементом в head) корректно отрисовывается 1`] = `
+<div
+  class="content "
+  data-testid="element-id"
+>
+  <div
+    class="text text_type_input text_color_input mb-4 absolute head element"
+    data-testid="head-id"
+  />
+  <div
+    class="circle   default"
+    data-testid="circle-id"
+  >
+    <p
+      class="text text_type_circle text_color_input letter"
+      data-testid="letter-id"
+    />
+  </div>
+  <p
+    class="text text_type_input text_color_input mt-4 absolute index"
+    data-testid="index-id"
+  />
+  <div
+    class="text text_type_input text_color_input mt-4 absolute tail30 element"
+    data-testid="tail-id"
+  />
+</div>
+`;
+
+exports[`Тесты компонента Circle Кейс #4 (с react-элементом в head) корректно отрисовывается 2`] = `
+<div
+  class="content "
+  data-testid="element-id"
+>
+  <div
+    class="text text_type_input text_color_input mb-4 absolute head element"
+    data-testid="head-id"
+  >
+    <div
+      class="content "
+      data-testid="element-id"
+    >
+      <div
+        class="text text_type_input text_color_input mb-4 absolute head element"
+        data-testid="head-id"
+      />
+      <div
+        class="circle   default"
+        data-testid="circle-id"
+      >
+        <p
+          class="text text_type_circle text_color_input letter"
+          data-testid="letter-id"
+        />
+      </div>
+      <p
+        class="text text_type_input text_color_input mt-4 absolute index"
+        data-testid="index-id"
+      />
+      <div
+        class="text text_type_input text_color_input mt-4 absolute tail30 element"
+        data-testid="tail-id"
+      />
+    </div>
+  </div>
+  <div
+    class="circle   default"
+    data-testid="circle-id"
+  >
+    <p
+      class="text text_type_circle text_color_input letter"
+      data-testid="letter-id"
+    />
+  </div>
+  <p
+    class="text text_type_input text_color_input mt-4 absolute index"
+    data-testid="index-id"
+  />
+  <div
+    class="text text_type_input text_color_input mt-4 absolute tail30 element"
+    data-testid="tail-id"
+  />
+</div>
+`;
+
+exports[`Тесты компонента Circle Кейс #5 (с tail) корректно отрисовывается 1`] = `
+<div
+  class="content "
+  data-testid="element-id"
+>
+  <div
+    class="text text_type_input text_color_input mb-4 absolute head element"
+    data-testid="head-id"
+  />
+  <div
+    class="circle   default"
+    data-testid="circle-id"
+  >
+    <p
+      class="text text_type_circle text_color_input letter"
+      data-testid="letter-id"
+    />
+  </div>
+  <p
+    class="text text_type_input text_color_input mt-4 absolute index"
+    data-testid="index-id"
+  />
+  <div
+    class="text text_type_input text_color_input mt-4 absolute tail30 string"
+    data-testid="tail-id"
+  >
+    tail
+  </div>
+</div>
+`;
+
+exports[`Тесты компонента Circle Кейс #6 (с react-элементом в tail) корректно отрисовывается 1`] = `
+<div
+  class="content "
+  data-testid="element-id"
+>
+  <div
+    class="text text_type_input text_color_input mb-4 absolute head element"
+    data-testid="head-id"
+  />
+  <div
+    class="circle   default"
+    data-testid="circle-id"
+  >
+    <p
+      class="text text_type_circle text_color_input letter"
+      data-testid="letter-id"
+    />
+  </div>
+  <p
+    class="text text_type_input text_color_input mt-4 absolute index"
+    data-testid="index-id"
+  />
+  <div
+    class="text text_type_input text_color_input mt-4 absolute tail30 element"
+    data-testid="tail-id"
+  />
+</div>
+`;
+
+exports[`Тесты компонента Circle Кейс #6 (с react-элементом в tail) корректно отрисовывается 2`] = `
+<div
+  class="content "
+  data-testid="element-id"
+>
+  <div
+    class="text text_type_input text_color_input mb-4 absolute head element"
+    data-testid="head-id"
+  />
+  <div
+    class="circle   default"
+    data-testid="circle-id"
+  >
+    <p
+      class="text text_type_circle text_color_input letter"
+      data-testid="letter-id"
+    />
+  </div>
+  <p
+    class="text text_type_input text_color_input mt-4 absolute index"
+    data-testid="index-id"
+  />
+  <div
+    class="text text_type_input text_color_input mt-4 absolute tail30 element"
+    data-testid="tail-id"
+  >
+    <div
+      class="content "
+      data-testid="element-id"
+    >
+      <div
+        class="text text_type_input text_color_input mb-4 absolute head element"
+        data-testid="head-id"
+      />
+      <div
+        class="circle   default"
+        data-testid="circle-id"
+      >
+        <p
+          class="text text_type_circle text_color_input letter"
+          data-testid="letter-id"
+        />
+      </div>
+      <p
+        class="text text_type_input text_color_input mt-4 absolute index"
+        data-testid="index-id"
+      />
+      <div
+        class="text text_type_input text_color_input mt-4 absolute tail30 element"
+        data-testid="tail-id"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Тесты компонента Circle Кейс #7 (с index) корректно отрисовывается 1`] = `
+<div
+  class="content "
+  data-testid="element-id"
+>
+  <div
+    class="text text_type_input text_color_input mb-4 absolute head element"
+    data-testid="head-id"
+  />
+  <div
+    class="circle   default"
+    data-testid="circle-id"
+  >
+    <p
+      class="text text_type_circle text_color_input letter"
+      data-testid="letter-id"
+    />
+  </div>
+  <p
+    class="text text_type_input text_color_input mt-4 absolute index"
+    data-testid="index-id"
+  >
+    1
+  </p>
+  <div
+    class="text text_type_input text_color_input mt-4 absolute tail60 element"
+    data-testid="tail-id"
+  />
+</div>
+`;
+
+exports[`Тесты компонента Circle Кейс #8 (с пропом isSmall ===  true) корректно отрисовывается 1`] = `
+<div
+  class="content "
+  data-testid="element-id"
+>
+  <div
+    class="text text_type_input text_color_input mb-4 absolute head element"
+    data-testid="head-id"
+  />
+  <div
+    class="circle  small default"
+    data-testid="circle-id"
+  >
+    <p
+      class="text text_type_circle text_color_input letter"
+      data-testid="letter-id"
+    />
+  </div>
+  <p
+    class="text text_type_input text_color_input mt-4 absolute index"
+    data-testid="index-id"
+  />
+  <div
+    class="text text_type_input text_color_input mt-4 absolute tail30 element"
+    data-testid="tail-id"
+  />
+</div>
+`;
+
+exports[`Тесты компонента Circle Кейс #9 (в состоянии default) корректно отрисовывается 1`] = `
+<div
+  class="content "
+  data-testid="element-id"
+>
+  <div
+    class="text text_type_input text_color_input mb-4 absolute head element"
+    data-testid="head-id"
+  />
+  <div
+    class="circle   default"
+    data-testid="circle-id"
+  >
+    <p
+      class="text text_type_circle text_color_input letter"
+      data-testid="letter-id"
+    />
+  </div>
+  <p
+    class="text text_type_input text_color_input mt-4 absolute index"
+    data-testid="index-id"
+  />
+  <div
+    class="text text_type_input text_color_input mt-4 absolute tail30 element"
+    data-testid="tail-id"
+  />
+</div>
+`;
+
+exports[`Тесты компонента Circle Кейс #10 (в состоянии changing) корректно отрисовывается 1`] = `
+<div
+  class="content "
+  data-testid="element-id"
+>
+  <div
+    class="text text_type_input text_color_input mb-4 absolute head element"
+    data-testid="head-id"
+  />
+  <div
+    class="circle   changing"
+    data-testid="circle-id"
+  >
+    <p
+      class="text text_type_circle text_color_input letter"
+      data-testid="letter-id"
+    />
+  </div>
+  <p
+    class="text text_type_input text_color_input mt-4 absolute index"
+    data-testid="index-id"
+  />
+  <div
+    class="text text_type_input text_color_input mt-4 absolute tail30 element"
+    data-testid="tail-id"
+  />
+</div>
+`;
+
+exports[`Тесты компонента Circle Кейс #11 (в состоянии modified) корректно отрисовывается 1`] = `
+<div
+  class="content "
+  data-testid="element-id"
+>
+  <div
+    class="text text_type_input text_color_input mb-4 absolute head element"
+    data-testid="head-id"
+  />
+  <div
+    class="circle   modified"
+    data-testid="circle-id"
+  >
+    <p
+      class="text text_type_circle text_color_input letter"
+      data-testid="letter-id"
+    />
+  </div>
+  <p
+    class="text text_type_input text_color_input mt-4 absolute index"
+    data-testid="index-id"
+  />
+  <div
+    class="text text_type_input text_color_input mt-4 absolute tail30 element"
+    data-testid="tail-id"
+  />
+</div>
+`;

@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Тесты компонента Button Кейс #1 (без текста / без diasbled / без лоадера) корректно отрисовывается + вызывается колбек при клике на кнопку 1`] = `
+<button
+  class="text text_type_button text_color_primary button undefined false "
+  data-testid="button-id"
+  type="button"
+>
+  <p
+    class="text undefined"
+    data-testid="text-id"
+  />
+</button>
+`;
+
+exports[`Тесты компонента Button Кейс #2 (c текстом) корректно отрисовывается + вызывается колбек при клике на кнопку 1`] = `
+<button
+  class="text text_type_button text_color_primary button undefined false "
+  data-testid="button-id"
+  type="button"
+>
+  <p
+    class="text undefined"
+    data-testid="text-id"
+  >
+    Test
+  </p>
+</button>
+`;
+
+exports[`Тесты компонента Button Кейс #3 (c diasbled) корректно отрисовывается + НЕ вызывается колбек при клике на кнопку 1`] = `
+<button
+  class="text text_type_button text_color_primary button undefined false "
+  data-testid="button-id"
+  type="button"
+>
+  <p
+    class="text undefined"
+    data-testid="text-id"
+  />
+</button>
+`;
+
+exports[`Тесты компонента Button Кейс #3 (c diasbled) корректно отрисовывается + НЕ вызывается колбек при клике на кнопку 2`] = `
+<button
+  class="text text_type_button text_color_primary button undefined false "
+  data-testid="button-id"
+  disabled=""
+  type="button"
+>
+  <p
+    class="text undefined"
+    data-testid="text-id"
+  />
+</button>
+`;
+
+exports[`Тесты компонента Button Кейс #4 (кнопка с лоадером) корректно отрисовывается + НЕ вызывается колбек при клике на кнопку 1`] = `
+<button
+  class="text text_type_button text_color_primary button undefined false "
+  data-testid="button-id"
+  type="button"
+>
+  <p
+    class="text undefined"
+    data-testid="text-id"
+  />
+</button>
+`;
+
+exports[`Тесты компонента Button Кейс #4 (кнопка с лоадером) корректно отрисовывается + НЕ вызывается колбек при клике на кнопку 2`] = `
+<button
+  class="text text_type_button text_color_primary button undefined loader "
+  data-testid="button-id"
+  disabled=""
+  type="button"
+>
+  <img
+    alt="Загрузка."
+    class="loader_icon"
+    data-testid="loader-id"
+    src="loader.svg"
+  />
+</button>
+`;

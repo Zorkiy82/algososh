@@ -94,7 +94,7 @@ export const StringComponent: React.FC = () => {
           />
         </div>
 
-        <div className={styles.animaionContainer}>
+        <div id="animaionContainer" className={styles.animaionContainer}>
           {inputValue &&
             !itemsData.length &&
             inputValue

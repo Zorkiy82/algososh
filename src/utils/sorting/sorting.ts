@@ -17,7 +17,7 @@ const sortDirection = {
   },
 };
 
-function bubbleSort(arr: any[], direction: Direction) {
+export function bubbleSort(arr: any[], direction: Direction) {
   const res = arr.slice();
   const actionDataLog: TActionDataLog = [];
 
@@ -51,7 +51,7 @@ function bubbleSort(arr: any[], direction: Direction) {
   return { res, actionDataLog };
 }
 
-function selectionSort(arr: any[], direction: Direction) {
+export function selectionSort(arr: any[], direction: Direction) {
   const res = arr.slice();
   const actionDataLog: TActionDataLog = [];
   const length = res.length;
