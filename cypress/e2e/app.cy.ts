@@ -4,266 +4,264 @@ import { getFibonacciNumbers } from "../../src/utils/fibonacci/fibonacci";
 import { SHORT_DELAY_IN_MS, DELAY_IN_MS } from "../../src/constants/delays";
 import { defaultLinkedList, LinkedList } from "../../src/utils/list/list";
 import { Queue } from "../../src/utils/queue/queue";
-import { find } from "cypress/types/lodash";
-import { wait } from "@testing-library/user-event/dist/utils";
 
 const stateDefault = new RegExp(ElementStates.Default);
 const stateModified = new RegExp(ElementStates.Modified);
 const stateChanging = new RegExp(ElementStates.Changing);
 
-// describe("Тестирование работоспособности приложения", () => {
-//   it("Приложение поднялось", () => {
-//     cy.visit("/");
-//     cy.contains(/Вдохновлено школами/i);
-//   });
-// });
+describe("Тестирование работоспособности приложения", () => {
+  it("Приложение поднялось", () => {
+    cy.visit("/");
+    cy.contains(/Вдохновлено школами/i);
+  });
+});
+
+//------------------------------------------------------------------------------------
+
+describe("Тестирование переходов по страницам", () => {
+  it("открывается страница Строка", () => {
+    cy.visit("/recursion");
+    cy.contains(/строка/i);
+  });
+
+  it("открывается страница Последовательность Фибоначчи", () => {
+    cy.visit("/fibonacci");
+    cy.contains(/Последовательность Фибоначчи/i);
+  });
+
+  it("открывается страница Сортировка массива", () => {
+    cy.visit("/sorting");
+    cy.contains(/Сортировка массива/i);
+  });
+
+  it("открывается страница Стек", () => {
+    cy.visit("/stack");
+    cy.contains(/Стек/i);
+  });
+
+  it("открывается страница Очередь", () => {
+    cy.visit("/queue");
+    cy.contains(/Очередь/i);
+  });
+
+  it("открывается страница Связный список", () => {
+    cy.visit("/list");
+    cy.contains(/Связный список/i);
+  });
+});
 
 // ------------------------------------------------------------------------------------
 
-// describe("Тестирование переходов по страницам", () => {
-//   it("открывается страница Строка", () => {
-//     cy.visit("/recursion");
-//     cy.contains(/строка/i);
-//   });
+describe("Функционал страницы Строка", () => {
+  beforeEach(function () {
+    cy.visit("/recursion");
+    cy.get("input").as("input");
+    cy.contains("Развернуть").as("button");
+  });
 
-//   it("открывается страница Последовательность Фибоначчи", () => {
-//     cy.visit("/fibonacci");
-//     cy.contains(/Последовательность Фибоначчи/i);
-//   });
+  it("Кнопка добавления недоступна если в инпуте пусто", () => {
+    cy.get("@input").should("have.value", "");
+    cy.get("@button").should("have.attr", "disabled");
+  });
 
-//   it("открывается страница Сортировка массива", () => {
-//     cy.visit("/sorting");
-//     cy.contains(/Сортировка массива/i);
-//   });
+  it("Анимация разворота строки корректно выполняется", () => {
+    const testData = "РаЗвОрОТ".toUpperCase();
+    const { res, actionDataLog } = reverseString(testData);
+    cy.get("@input").type(`${testData}`);
 
-//   it("открывается страница Стек", () => {
-//     cy.visit("/stack");
-//     cy.contains(/Стек/i);
-//   });
+    cy.get("#animaionContainer")
+      .children()
+      .each(($el, index) => {
+        cy.wrap($el)
+          .find("[data-testid=circle-id]")
+          .should("have.text", testData[index]);
+        cy.wrap($el)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateDefault);
+      });
 
-//   it("открывается страница Очередь", () => {
-//     cy.visit("/queue");
-//     cy.contains(/Очередь/i);
-//   });
+    cy.get("@button").click();
+    cy.wait(SHORT_DELAY_IN_MS);
 
-//   it("открывается страница Связный список", () => {
-//     cy.visit("/list");
-//     cy.contains(/Связный список/i);
-//   });
-// });
+    for (let i = 0; i < actionDataLog.length; i++) {
+      const actionIndex = actionDataLog[i].actionIndex;
 
-// ------------------------------------------------------------------------------------
+      actionIndex.forEach((position) => {
+        cy.get("#animaionContainer")
+          .children()
+          .its(position)
+          .find("[data-testid=letter-id]")
+          .should("have.text", testData[position]);
 
-// describe("Функционал страницы Строка", () => {
-//   beforeEach(function () {
-//     cy.visit("/recursion");
-//     cy.get("input").as("input");
-//     cy.contains("Развернуть").as("button");
-//   });
+        cy.get("#animaionContainer")
+          .children()
+          .its(position)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateChanging);
+      });
 
-//   it("Кнопка добавления недоступна если в инпуте пусто", () => {
-//     cy.get("@input").should("have.value", "");
-//     cy.get("@button").should("have.attr", "disabled");
-//   });
+      cy.wait(DELAY_IN_MS);
 
-//   it("Анимация разворота строки корректно выполняется", () => {
-//     const testData = "РаЗвОрОТ".toUpperCase();
-//     const { res, actionDataLog } = reverseString(testData);
-//     cy.get("@input").type(`${testData}`);
+      actionIndex.forEach((position) => {
+        cy.get("#animaionContainer")
+          .children()
+          .its(position)
+          .find("[data-testid=letter-id]")
+          .should("have.text", res[position]);
 
-//     cy.get("#animaionContainer")
-//       .children()
-//       .each(($el, index) => {
-//         cy.wrap($el)
-//           .find("[data-testid=circle-id]")
-//           .should("have.text", testData[index]);
-//         cy.wrap($el)
-//           .find("[data-testid=circle-id]")
-//           .invoke("attr", "class")
-//           .should("match", stateDefault);
-//       });
-
-//     cy.get("@button").click();
-//     cy.wait(SHORT_DELAY_IN_MS);
-
-//     for (let i = 0; i < actionDataLog.length; i++) {
-//       const actionIndex = actionDataLog[i].actionIndex;
-
-//       actionIndex.forEach((position) => {
-//         cy.get("#animaionContainer")
-//           .children()
-//           .its(position)
-//           .find("[data-testid=letter-id]")
-//           .should("have.text", testData[position]);
-
-//         cy.get("#animaionContainer")
-//           .children()
-//           .its(position)
-//           .find("[data-testid=circle-id]")
-//           .invoke("attr", "class")
-//           .should("match", stateChanging);
-//       });
-
-//       cy.wait(DELAY_IN_MS);
-
-//       actionIndex.forEach((position) => {
-//         cy.get("#animaionContainer")
-//           .children()
-//           .its(position)
-//           .find("[data-testid=letter-id]")
-//           .should("have.text", res[position]);
-
-//         cy.get("#animaionContainer")
-//           .children()
-//           .its(position)
-//           .find("[data-testid=circle-id]")
-//           .invoke("attr", "class")
-//           .should("match", stateModified);
-//       });
-//     }
-//   });
-// });
+        cy.get("#animaionContainer")
+          .children()
+          .its(position)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateModified);
+      });
+    }
+  });
+});
 
 // ------------------------------------------------------------------------------------
 
-// describe("Функционал страницы Фибоначчи", () => {
-//   beforeEach(function () {
-//     cy.visit("/fibonacci");
-//     cy.get("input").as("input");
-//     cy.contains("Рассчитать").as("button");
-//   });
+describe("Функционал страницы Фибоначчи", () => {
+  beforeEach(function () {
+    cy.visit("/fibonacci");
+    cy.get("input").as("input");
+    cy.contains("Рассчитать").as("button");
+  });
 
-//   it("Кнопка добавления недоступна если в инпуте пусто", () => {
-//     cy.get("@input").should("have.value", "");
-//     cy.get("@button").should("have.attr", "disabled");
-//   });
+  it("Кнопка добавления недоступна если в инпуте пусто", () => {
+    cy.get("@input").should("have.value", "");
+    cy.get("@button").should("have.attr", "disabled");
+  });
 
-//   it("Анимация генерации чисел корректно выполняется", () => {
-//     const testData = 19;
-//     const res = getFibonacciNumbers(testData);
-//     cy.get("@input").type(`${testData}`);
-//     cy.get("#animaionContainer").children().should("have.length", 0);
+  it("Анимация генерации чисел корректно выполняется", () => {
+    const testData = 19;
+    const res = getFibonacciNumbers(testData);
+    cy.get("@input").type(`${testData}`);
+    cy.get("#animaionContainer").children().should("have.length", 0);
 
-//     cy.get("@button").click();
+    cy.get("@button").click();
 
-//     for (let i = 0; i < res.length; i++) {
-//       cy.get("#animaionContainer")
-//         .children()
-//         .last()
-//         .find("[data-testid=letter-id]")
-//         .should("have.text", String(res[i]));
+    for (let i = 0; i < res.length; i++) {
+      cy.get("#animaionContainer")
+        .children()
+        .last()
+        .find("[data-testid=letter-id]")
+        .should("have.text", String(res[i]));
 
-//       cy.wait(DELAY_IN_MS);
-//     }
-//   });
-// });
+      cy.wait(DELAY_IN_MS);
+    }
+  });
+});
 
 // ------------------------------------------------------------------------------------
 
-// describe("Функционал страницы Стек", () => {
-//   beforeEach(function () {
-//     cy.visit("/stack");
-//     cy.get("input").as("input");
-//     cy.contains("Добавить").as("button");
-//     cy.contains("Удалить").as("delButton");
-//     cy.contains("Очистить").as("clrButton");
-//   });
+describe("Функционал страницы Стек", () => {
+  beforeEach(function () {
+    cy.visit("/stack");
+    cy.get("input").as("input");
+    cy.contains("Добавить").as("button");
+    cy.contains("Удалить").as("delButton");
+    cy.contains("Очистить").as("clrButton");
+  });
 
-//   it("Кнопка добавления недоступна если в инпуте пусто", () => {
-//     cy.get("@input").should("have.value", "");
-//     cy.get("@button").should("have.attr", "disabled");
-//   });
+  it("Кнопка добавления недоступна если в инпуте пусто", () => {
+    cy.get("@input").should("have.value", "");
+    cy.get("@button").should("have.attr", "disabled");
+  });
 
-//   it("Анимация добавления элемента в стек корректно выполняется", () => {
-//     const testData = "el1".toLocaleUpperCase();
-//     cy.get("@input").type(`${testData}`);
-//     cy.get("@button").click();
+  it("Анимация добавления элемента в стек корректно выполняется", () => {
+    const testData = "el1".toLocaleUpperCase();
+    cy.get("@input").type(`${testData}`);
+    cy.get("@button").click();
 
-//     cy.get("#animaionContainer")
-//       .children()
-//       .last()
-//       .find("[data-testid=letter-id]")
-//       .should("have.text", testData);
+    cy.get("#animaionContainer")
+      .children()
+      .last()
+      .find("[data-testid=letter-id]")
+      .should("have.text", testData);
 
-//     cy.get("#animaionContainer")
-//       .children()
-//       .last()
-//       .find("[data-testid=circle-id]")
-//       .invoke("attr", "class")
-//       .should("match", stateChanging);
+    cy.get("#animaionContainer")
+      .children()
+      .last()
+      .find("[data-testid=circle-id]")
+      .invoke("attr", "class")
+      .should("match", stateChanging);
 
-//     cy.wait(SHORT_DELAY_IN_MS);
+    cy.wait(SHORT_DELAY_IN_MS);
 
-//     cy.get("#animaionContainer")
-//       .children()
-//       .last()
-//       .find("[data-testid=letter-id]")
-//       .should("have.text", testData);
+    cy.get("#animaionContainer")
+      .children()
+      .last()
+      .find("[data-testid=letter-id]")
+      .should("have.text", testData);
 
-//     cy.get("#animaionContainer")
-//       .children()
-//       .last()
-//       .find("[data-testid=circle-id]")
-//       .invoke("attr", "class")
-//       .should("match", stateDefault);
-//   });
+    cy.get("#animaionContainer")
+      .children()
+      .last()
+      .find("[data-testid=circle-id]")
+      .invoke("attr", "class")
+      .should("match", stateDefault);
+  });
 
-//   it("Анимация удаления элемента из стека корректно выполняется", () => {
-//     const testData = "el1".toLocaleUpperCase();
-//     cy.get("@input").type(`${testData}`);
-//     cy.get("@button").click();
-//     cy.get("#animaionContainer").children().should("have.length", 1);
+  it("Анимация удаления элемента из стека корректно выполняется", () => {
+    const testData = "el1".toLocaleUpperCase();
+    cy.get("@input").type(`${testData}`);
+    cy.get("@button").click();
+    cy.get("#animaionContainer").children().should("have.length", 1);
 
-//     cy.get("@delButton").click();
+    cy.get("@delButton").click();
 
-//     cy.get("#animaionContainer")
-//       .children()
-//       .last()
-//       .find("[data-testid=letter-id]")
-//       .should("have.text", testData);
+    cy.get("#animaionContainer")
+      .children()
+      .last()
+      .find("[data-testid=letter-id]")
+      .should("have.text", testData);
 
-//     cy.get("#animaionContainer")
-//       .children()
-//       .last()
-//       .find("[data-testid=circle-id]")
-//       .invoke("attr", "class")
-//       .should("match", stateChanging);
+    cy.get("#animaionContainer")
+      .children()
+      .last()
+      .find("[data-testid=circle-id]")
+      .invoke("attr", "class")
+      .should("match", stateChanging);
 
-//     cy.wait(SHORT_DELAY_IN_MS);
+    cy.wait(SHORT_DELAY_IN_MS);
 
-//     cy.get("#animaionContainer").children().should("have.length", 0);
-//   });
+    cy.get("#animaionContainer").children().should("have.length", 0);
+  });
 
-//   it("Анимация очистки стека корректно выполняется", () => {
-//     const testData = ["el0", "el1", "el2", "el3", "el4"].map((val) =>
-//       val.toUpperCase()
-//     );
+  it("Анимация очистки стека корректно выполняется", () => {
+    const testData = ["el0", "el1", "el2", "el3", "el4"].map((val) =>
+      val.toUpperCase()
+    );
 
-//     for (let i = 0; i < testData.length; i++) {
-//       cy.get("@input").type(`${testData[i]}`);
-//       cy.get("@button").click();
-//       cy.get("#animaionContainer")
-//         .children()
-//         .should("have.length", i + 1);
-//       cy.wait(SHORT_DELAY_IN_MS);
-//     }
+    for (let i = 0; i < testData.length; i++) {
+      cy.get("@input").type(`${testData[i]}`);
+      cy.get("@button").click();
+      cy.get("#animaionContainer")
+        .children()
+        .should("have.length", i + 1);
+      cy.wait(SHORT_DELAY_IN_MS);
+    }
 
-//     cy.get("@clrButton").click();
+    cy.get("@clrButton").click();
 
-//     cy.get("#animaionContainer")
-//       .children()
-//       .each(($el) => {
-//         cy.wrap($el)
-//           .find("[data-testid=circle-id]")
-//           .invoke("attr", "class")
-//           .should("match", stateChanging);
-//       });
+    cy.get("#animaionContainer")
+      .children()
+      .each(($el) => {
+        cy.wrap($el)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateChanging);
+      });
 
-//     cy.wait(SHORT_DELAY_IN_MS);
+    cy.wait(SHORT_DELAY_IN_MS);
 
-//     cy.get("#animaionContainer").children().should("have.length", 0);
-//   });
-// });
+    cy.get("#animaionContainer").children().should("have.length", 0);
+  });
+});
 
 // ------------------------------------------------------------------------------------
 
@@ -276,213 +274,214 @@ describe("Функционал страницы Очередь", () => {
     cy.contains("Очистить").as("clrButton");
   });
 
-  // it("Кнопка добавления недоступна если в инпуте пусто", () => {
-  //   cy.get("@input").should("have.value", "");
-  //   cy.get("@button").should("have.attr", "disabled");
-  // });
+  it("Кнопка добавления недоступна если в инпуте пусто", () => {
+    cy.get("@input").should("have.value", "");
+    cy.get("@button").should("have.attr", "disabled");
+  });
 
-  // it("Анимация добавления элемента в очередь корректно выполняется", () => {
-  //   const queue = new Queue<string>(7);
-  //   const testData = ["el0", "el1", "el2", "el3", "el4", "el5", "el6"].map(
-  //     (val) => val.toLocaleUpperCase()
-  //   );
-  //   for (let i = 0; i < testData.length; i++) {
-  //     const tail = queue.getTail();
-  //     const length = queue.getLength();
-  //     queue.enqueue(testData[i]);
-  //     cy.get("@input").type(`${testData[i]}`);
-  //     cy.get("@button").click();
-  //     cy.get("#animaionContainer")
-  //       .children()
-  //       .its(tail)
-  //       .find("[data-testid=circle-id]")
-  //       .invoke("attr", "class")
-  //       .should("match", stateChanging);
+  it("Анимация добавления элемента в очередь корректно выполняется", () => {
+    const queue = new Queue<string>(7);
+    const testData = ["el0", "el1", "el2", "el3", "el4", "el5", "el6"].map(
+      (val) => val.toLocaleUpperCase()
+    );
+    for (let i = 0; i < testData.length; i++) {
+      const tail = queue.getTail();
+      const length = queue.getLength();
+      queue.enqueue(testData[i]);
+      cy.get("@input").type(`${testData[i]}`);
+      cy.get("@button").click();
+      cy.get("#animaionContainer")
+        .children()
+        .its(tail)
+        .find("[data-testid=circle-id]")
+        .invoke("attr", "class")
+        .should("match", stateChanging);
 
-  //     if (length) {
-  //       cy.get("#animaionContainer")
-  //         .children()
-  //         .its(tail)
-  //         .find("[data-testid=tail-id]")
-  //         .should("have.text", "tail");
-  //     } else {
-  //       cy.get("#animaionContainer")
-  //         .children()
-  //         .its(tail)
-  //         .find("[data-testid=tail-id]")
-  //         .should("have.text", "");
-  //     }
+      if (length) {
+        cy.get("#animaionContainer")
+          .children()
+          .its(tail)
+          .find("[data-testid=tail-id]")
+          .should("have.text", "tail");
+      } else {
+        cy.get("#animaionContainer")
+          .children()
+          .its(tail)
+          .find("[data-testid=tail-id]")
+          .should("have.text", "");
+      }
 
-  //     cy.wait(SHORT_DELAY_IN_MS);
+      cy.wait(SHORT_DELAY_IN_MS);
 
-  //     cy.get("#animaionContainer")
-  //       .find("[data-testid=letter-id]")
-  //       .filter(":contains('EL')")
-  //       .should("have.length", queue.getLength());
+      cy.get("#animaionContainer")
+        .find("[data-testid=letter-id]")
+        .filter(":contains('EL')")
+        .should("have.length", queue.getLength());
 
-  //     cy.get("#animaionContainer")
-  //       .children()
-  //       .its(tail)
-  //       .find("[data-testid=letter-id]")
-  //       .should("have.text", testData[i]);
+      cy.get("#animaionContainer")
+        .children()
+        .its(tail)
+        .find("[data-testid=letter-id]")
+        .should("have.text", testData[i]);
 
-  //     cy.get("#animaionContainer")
-  //       .children()
-  //       .its(tail)
-  //       .find("[data-testid=circle-id]")
-  //       .invoke("attr", "class")
-  //       .should("match", stateDefault);
+      cy.get("#animaionContainer")
+        .children()
+        .its(tail)
+        .find("[data-testid=circle-id]")
+        .invoke("attr", "class")
+        .should("match", stateDefault);
 
-  //     cy.get("#animaionContainer")
-  //       .children()
-  //       .its(tail)
-  //       .find("[data-testid=tail-id]")
-  //       .should("not.have.text", "tail");
+      cy.get("#animaionContainer")
+        .children()
+        .its(tail)
+        .find("[data-testid=tail-id]")
+        .should("not.have.text", "tail");
 
-  //     cy.get("#animaionContainer")
-  //       .children()
-  //       .its(queue.getTail())
-  //       .find("[data-testid=tail-id]")
-  //       .should("have.text", "tail");
-  //   }
-  // });
+      cy.get("#animaionContainer")
+        .children()
+        .its(queue.getTail())
+        .find("[data-testid=tail-id]")
+        .should("have.text", "tail");
+    }
+  });
 
-  // it("Анимация удаления элемента из очереди корректно выполняется", () => {
-  //   const queue = new Queue<string>(7);
-  //   const testData = ["el0", "el1", "el2", "el3", "el4", "el5", "el6"].map(
-  //     (val) => val.toLocaleUpperCase()
-  //   );
+  it("Анимация удаления элемента из очереди корректно выполняется", () => {
+    const queue = new Queue<string>(7);
+    const testData = ["el0", "el1", "el2", "el3", "el4", "el5", "el6"].map(
+      (val) => val.toLocaleUpperCase()
+    );
 
-  //   for (let i = 0; i < testData.length; i++) {
-  //     cy.get("@input").type(`${testData[i]}`);
-  //     cy.get("@button").click();
-  //     queue.enqueue(testData[i]);
-  //     cy.wait(SHORT_DELAY_IN_MS);
-  //   }
+    for (let i = 0; i < testData.length; i++) {
+      cy.get("@input").type(`${testData[i]}`);
+      cy.get("@button").click();
+      queue.enqueue(testData[i]);
+      cy.wait(SHORT_DELAY_IN_MS);
+    }
 
-  //   for (let i = 0; i < testData.length; i++) {
-  //     const head = queue.getHead();
-  //     const length = queue.getLength();
-  //     cy.get("@delButton").click();
-  //     queue.dequeue();
+    for (let i = 0; i < testData.length; i++) {
+      const head = queue.getHead();
+      const length = queue.getLength();
+      cy.get("@delButton").click();
+      queue.dequeue();
 
-  //     cy.get("#animaionContainer")
-  //       .children()
-  //       .its(head)
-  //       .find("[data-testid=circle-id]")
-  //       .invoke("attr", "class")
-  //       .should("match", stateChanging);
+      cy.get("#animaionContainer")
+        .children()
+        .its(head)
+        .find("[data-testid=circle-id]")
+        .invoke("attr", "class")
+        .should("match", stateChanging);
 
-  //     if (length) {
-  //       cy.get("#animaionContainer")
-  //         .children()
-  //         .its(head)
-  //         .find("[data-testid=head-id]")
-  //         .should("have.text", "head");
-  //     } else {
-  //       cy.get("#animaionContainer")
-  //         .children()
-  //         .its(head)
-  //         .find("[data-testid=head-id]")
-  //         .should("have.text", "");
-  //     }
-  //     cy.wait(SHORT_DELAY_IN_MS);
+      if (length) {
+        cy.get("#animaionContainer")
+          .children()
+          .its(head)
+          .find("[data-testid=head-id]")
+          .should("have.text", "head");
+      } else {
+        cy.get("#animaionContainer")
+          .children()
+          .its(head)
+          .find("[data-testid=head-id]")
+          .should("have.text", "");
+      }
+      cy.wait(SHORT_DELAY_IN_MS);
 
-  //     cy.get("#animaionContainer")
-  //       .find("[data-testid=letter-id]")
-  //       .filter(":contains('EL')")
-  //       .should("have.length", queue.getLength());
+      cy.get("#animaionContainer")
+        .find("[data-testid=letter-id]")
+        .filter(":contains('EL')")
+        .should("have.length", queue.getLength());
 
-  //     cy.get("#animaionContainer")
-  //       .children()
-  //       .its(head)
-  //       .find("[data-testid=letter-id]")
-  //       .should("have.text", "");
+      cy.get("#animaionContainer")
+        .children()
+        .its(head)
+        .find("[data-testid=letter-id]")
+        .should("have.text", "");
 
-  //     cy.get("#animaionContainer")
-  //       .children()
-  //       .its(head)
-  //       .find("[data-testid=circle-id]")
-  //       .invoke("attr", "class")
-  //       .should("match", stateDefault);
+      cy.get("#animaionContainer")
+        .children()
+        .its(head)
+        .find("[data-testid=circle-id]")
+        .invoke("attr", "class")
+        .should("match", stateDefault);
 
-  //     cy.get("#animaionContainer")
-  //       .children()
-  //       .its(head)
-  //       .find("[data-testid=head-id]")
-  //       .should("have.text", "");
+      cy.get("#animaionContainer")
+        .children()
+        .its(head)
+        .find("[data-testid=head-id]")
+        .should("have.text", "");
 
-  //     if (queue.getLength()) {
-  //       cy.get("#animaionContainer")
-  //         .children()
-  //         .its(queue.getHead())
-  //         .find("[data-testid=head-id]")
-  //         .should("have.text", "head");
-  //     } else {
-  //       cy.get("#animaionContainer")
-  //         .find("[data-testid=head-id]")
-  //         .filter(":contains('head')")
-  //         .should("have.length", 0);
-  //     }
-  //   }
-  // });
-  // it("Анимация очистки очереди корректно выполняется", () => {
-  //   const queue = new Queue<string>(7);
-  //   const testData = ["el0", "el1", "el2"].map((val) =>
-  //     val.toLocaleUpperCase()
-  //   );
+      if (queue.getLength()) {
+        cy.get("#animaionContainer")
+          .children()
+          .its(queue.getHead())
+          .find("[data-testid=head-id]")
+          .should("have.text", "head");
+      } else {
+        cy.get("#animaionContainer")
+          .find("[data-testid=head-id]")
+          .filter(":contains('head')")
+          .should("have.length", 0);
+      }
+    }
+  });
 
-  //   for (let i = 0; i < testData.length; i++) {
-  //     cy.get("@input").type(`${testData[i]}`);
-  //     cy.get("@button").click();
-  //     queue.enqueue(testData[i]);
-  //     cy.wait(SHORT_DELAY_IN_MS);
-  //   }
+  it("Анимация очистки очереди корректно выполняется", () => {
+    const queue = new Queue<string>(7);
+    const testData = ["el0", "el1", "el2"].map((val) =>
+      val.toLocaleUpperCase()
+    );
 
-  //   cy.get("@clrButton").click();
+    for (let i = 0; i < testData.length; i++) {
+      cy.get("@input").type(`${testData[i]}`);
+      cy.get("@button").click();
+      queue.enqueue(testData[i]);
+      cy.wait(SHORT_DELAY_IN_MS);
+    }
 
-  //   cy.get("#animaionContainer")
-  //     .children()
-  //     .each(($el) => {
-  //       cy.wrap($el)
-  //         .find("[data-testid=circle-id]")
-  //         .invoke("attr", "class")
-  //         .should("match", stateChanging);
-  //     });
+    cy.get("@clrButton").click();
 
-  //     cy.get("#animaionContainer")
-  //     .find("[data-testid=letter-id]")
-  //     .filter(":contains('EL')")
-  //     .should("have.length", queue.getLength());
+    cy.get("#animaionContainer")
+      .children()
+      .each(($el) => {
+        cy.wrap($el)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateChanging);
+      });
 
-  //     queue.clear();
+    cy.get("#animaionContainer")
+      .find("[data-testid=letter-id]")
+      .filter(":contains('EL')")
+      .should("have.length", queue.getLength());
 
-  //   cy.wait(SHORT_DELAY_IN_MS);
+    queue.clear();
 
-  //   cy.get("#animaionContainer")
-  //     .children()
-  //     .each(($el) => {
-  //       cy.wrap($el)
-  //         .find("[data-testid=circle-id]")
-  //         .invoke("attr", "class")
-  //         .should("match", stateDefault);
-  //     });
+    cy.wait(SHORT_DELAY_IN_MS);
 
-  //   cy.get("#animaionContainer")
-  //     .find("[data-testid=head-id]")
-  //     .filter(":contains('head')")
-  //     .should("have.length", 0);
+    cy.get("#animaionContainer")
+      .children()
+      .each(($el) => {
+        cy.wrap($el)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateDefault);
+      });
 
-  //   cy.get("#animaionContainer")
-  //     .find("[data-testid=tail-id]")
-  //     .filter(":contains('tail')")
-  //     .should("have.length", 0);
+    cy.get("#animaionContainer")
+      .find("[data-testid=head-id]")
+      .filter(":contains('head')")
+      .should("have.length", 0);
 
-  //   cy.get("#animaionContainer")
-  //     .find("[data-testid=letter-id]")
-  //     .filter(":contains('EL')")
-  //     .should("have.length", queue.getLength());
-  // });
+    cy.get("#animaionContainer")
+      .find("[data-testid=tail-id]")
+      .filter(":contains('tail')")
+      .should("have.length", 0);
+
+    cy.get("#animaionContainer")
+      .find("[data-testid=letter-id]")
+      .filter(":contains('EL')")
+      .should("have.length", queue.getLength());
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -779,7 +778,244 @@ describe("Функционал страницы Список", () => {
           .find("[data-testid=letter-id]")
           .should("have.text", listArr[index].value);
 
-        if (index === list.getSize()-1) {
+        if (index === list.getSize() - 1) {
+          cy.wrap($el)
+            .children("[data-testid=tail-id]")
+            .should("have.text", "tail");
+        }
+
+        if (index === 0) {
+          cy.wrap($el)
+            .children("[data-testid=head-id]")
+            .should("have.text", "head");
+        }
+      });
+  });
+
+  it("Анимация удаления элемента из head корректно выполняется", () => {
+    const list = new LinkedList<string>(
+      defaultLinkedList.map((val) => val.toUpperCase())
+    );
+
+    cy.get("#animaionContainer")
+      .children()
+      .first()
+      .children("[data-testid=element-id]")
+      .as("firstElem");
+
+    cy.get("@delHeadButton").click();
+
+    let listArr = list.toArray();
+
+    cy.get("@firstElem")
+      .children("[data-testid=tail-id]")
+      .find("[data-testid=circle-id]")
+      .invoke("attr", "class")
+      .should("match", stateChanging);
+
+    cy.get("@firstElem")
+      .children("[data-testid=tail-id]")
+      .find("[data-testid=letter-id]")
+      .should("have.text", listArr[0].value);
+
+    cy.get("@firstElem")
+      .find("[data-testid=circle-id]")
+      .should("have.length", 2);
+
+    cy.get("@firstElem")
+      .children("[data-testid=circle-id]")
+      .invoke("attr", "class")
+      .should("match", stateDefault);
+
+    cy.get("@firstElem")
+      .children("[data-testid=circle-id]")
+      .find("[data-testid=letter-id]")
+      .should("have.text", "");
+
+    list.deleteHead();
+    listArr = list.toArray();
+
+    cy.wait(DELAY_IN_MS);
+
+    cy.get("#animaionContainer")
+      .find("[data-testid=element-id]")
+      .each(($el, index) => {
+        cy.wrap($el)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateDefault);
+
+        cy.wrap($el)
+          .find("[data-testid=letter-id]")
+          .should("have.text", listArr[index].value);
+
+        if (index === list.getSize() - 1) {
+          cy.wrap($el)
+            .children("[data-testid=tail-id]")
+            .should("have.text", "tail");
+        }
+
+        if (index === 0) {
+          cy.wrap($el)
+            .children("[data-testid=head-id]")
+            .should("have.text", "head");
+        }
+      });
+  });
+
+  it("Анимация удаления элемента из tail корректно выполняется", () => {
+    const list = new LinkedList<string>(
+      defaultLinkedList.map((val) => val.toUpperCase())
+    );
+
+    cy.get("#animaionContainer")
+      .children()
+      .last()
+      .children("[data-testid=element-id]")
+      .as("lastElem");
+
+    cy.get("@delTailButton").click();
+
+    let listArr = list.toArray();
+
+    cy.get("@lastElem")
+      .children("[data-testid=tail-id]")
+      .find("[data-testid=circle-id]")
+      .invoke("attr", "class")
+      .should("match", stateChanging);
+
+    cy.get("@lastElem")
+      .children("[data-testid=tail-id]")
+      .find("[data-testid=letter-id]")
+      .should("have.text", listArr[listArr.length - 1].value);
+
+    cy.get("@lastElem")
+      .find("[data-testid=circle-id]")
+      .should("have.length", 2);
+
+    cy.get("@lastElem")
+      .children("[data-testid=circle-id]")
+      .invoke("attr", "class")
+      .should("match", stateDefault);
+
+    cy.get("@lastElem")
+      .children("[data-testid=circle-id]")
+      .find("[data-testid=letter-id]")
+      .should("have.text", "");
+
+    list.deleteTail();
+    listArr = list.toArray();
+
+    cy.wait(DELAY_IN_MS);
+
+    cy.get("#animaionContainer")
+      .find("[data-testid=element-id]")
+      .each(($el, index) => {
+        cy.wrap($el)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateDefault);
+
+        cy.wrap($el)
+          .find("[data-testid=letter-id]")
+          .should("have.text", listArr[index].value);
+
+        if (index === list.getSize() - 1) {
+          cy.wrap($el)
+            .children("[data-testid=tail-id]")
+            .should("have.text", "tail");
+        }
+
+        if (index === 0) {
+          cy.wrap($el)
+            .children("[data-testid=head-id]")
+            .should("have.text", "head");
+        }
+      });
+  });
+
+  it("Анимация удаления элемента по индексу корректно выполняется", () => {
+    const testIndex = 2;
+    const list = new LinkedList<string>(
+      defaultLinkedList.map((val) => val.toUpperCase())
+    );
+    cy.get("#animaionContainer").children().as("allChil");
+
+    cy.get("@indexInput").type(String(testIndex));
+    cy.get("@delIndexButton").click();
+
+    let listArr = list.toArray();
+
+    for (let i = 0; i <= testIndex; i++) {
+      cy.get("@allChil")
+        .its(i)
+        .children("[data-testid=element-id]")
+        .children("[data-testid=tail-id]")
+        .find("[data-testid=circle-id]")
+        .invoke("attr", "class")
+        .should("match", stateChanging);
+
+      cy.get("@allChil")
+        .its(i)
+        .children("[data-testid=element-id]")
+        .children("[data-testid=tail-id]")
+        .find("[data-testid=letter-id]")
+        .should("have.text", "");
+
+      cy.get("@allChil")
+        .its(i)
+        .children("[data-testid=element-id]")
+        .find("[data-testid=circle-id]")
+        .should("have.length", 2);
+
+      cy.get("@allChil")
+        .its(i)
+        .children("[data-testid=element-id]")
+        .children("[data-testid=circle-id]")
+        .invoke("attr", "class")
+        .should("match", stateDefault);
+
+      cy.wait(DELAY_IN_MS);
+
+      cy.get("@allChil")
+        .its(i)
+        .children("[data-testid=element-id]")
+        .children("[data-testid=circle-id]")
+        .invoke("attr", "class")
+        .should("match", stateChanging);
+
+      cy.get("@allChil")
+        .its(i)
+        .children("[data-testid=element-id]")
+        .children("[data-testid=circle-id]")
+        .find("[data-testid=letter-id]")
+        .should("have.text", i < testIndex ? listArr[i].value : "");
+
+      cy.get("@allChil")
+        .its(i)
+        .children("[data-testid=element-id]")
+        .children("[data-testid=tail-id]")
+        .should("have.text", i < testIndex ? "" : listArr[i].value);
+    }
+
+    list.deleteByIndex(undefined, testIndex);
+    listArr = list.toArray();
+
+    cy.wait(DELAY_IN_MS);
+
+    cy.get("#animaionContainer")
+      .find("[data-testid=element-id]")
+      .each(($el, index) => {
+        cy.wrap($el)
+          .find("[data-testid=circle-id]")
+          .invoke("attr", "class")
+          .should("match", stateDefault);
+
+        cy.wrap($el)
+          .find("[data-testid=letter-id]")
+          .should("have.text", listArr[index].value);
+
+        if (index === list.getSize() - 1) {
           cy.wrap($el)
             .children("[data-testid=tail-id]")
             .should("have.text", "tail");
