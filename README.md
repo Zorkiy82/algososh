@@ -12,7 +12,7 @@ __5. Cypress__
 
 ## Демо сайт: 
 
-[https://algososh-amber.vercel.app](https://algososh-amber.vercel.app)
+[https://algososh-zorkiy82.vercel.app](https://algososh-zorkiy82.vercel.app/)
 
 ## Как запустить проект
 - `git clone git@github.com:Zorkiy82/algososh.git`
